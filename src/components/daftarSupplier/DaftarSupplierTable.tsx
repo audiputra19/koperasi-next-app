@@ -1,0 +1,73 @@
+'use client';
+
+import DataTable, { TableColumn } from "@/src/components/common/DataTable";
+import { cn } from "@/src/lib/cn";
+import { DaftarSupplier } from "@/src/types/menu";
+import { SquarePen } from "lucide-react";
+
+type TableSupplier = DaftarSupplier & Record<string, unknown>;
+
+interface DaftarSupplierTableProps {
+    dataAwal: DaftarSupplier[];
+    onEdit: (supplier: DaftarSupplier) => void;
+}
+
+export default function DaftarSupplierTable({ dataAwal, onEdit }: DaftarSupplierTableProps) {
+    
+    const columns: TableColumn<TableSupplier>[] = [
+        { 
+            header: 'KODE', 
+            sortKey: 'kode', 
+            className: 'text-center min-w-[100px]',
+            renderCell: (p) => p.kode 
+        },
+        { 
+            header: 'NAMA', 
+            sortKey: 'nama', 
+            className: 'text-start min-w-[250px]',
+            renderCell: (p) => p.nama 
+        },
+        { 
+            header: 'ALAMAT', 
+            sortKey: 'alamat', 
+            className: 'text-start min-w-[300px]',
+            renderCell: (p) => p.alamat
+        },
+        { 
+            header: 'ACTION', 
+            className: 'text-center',
+            renderCell: (p) => (
+                <button 
+                    className={cn(
+                        "p-1.5 rounded cursor-pointer",
+                        "hover:bg-base-300"
+                    )}
+                    onClick={() => onEdit(p)}
+                >
+                    <SquarePen size={20}/>
+                </button> 
+            )
+        },
+    ];
+
+    return (
+        <DataTable<TableSupplier>
+            dataAwal={dataAwal as TableSupplier[]}
+            columns={columns}
+            searchKeys={['kode', 'nama', 'alamat']}
+            filenameExport="Daftar_Supplier"
+            excelMapping={(p, idx) => ({
+                No: idx + 1,
+                Kode: p.kode,
+                Nama: p.nama,
+                Alamat: p.alamat
+            })}
+            pdfMapping={(p, idx) => [
+                idx + 1, 
+                String(p.kode), 
+                p.nama, 
+                p.alamat
+            ]}
+        />
+    );
+}
