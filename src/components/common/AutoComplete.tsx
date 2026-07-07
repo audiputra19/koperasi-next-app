@@ -11,8 +11,8 @@ interface AutocompleteProps<T> {
     onSelect: (item: T) => void;
     valueKey: keyof T;
     labelKey: keyof T;
-    
     isLoading?: boolean;
+    onClear?: () => void;
 }
 
 // Autocomplete ini wajib kombinasi antara kode dan nama!
@@ -23,7 +23,8 @@ export function Autocomplete<T>({
     onSelect, 
     valueKey,
     labelKey,
-    isLoading = false 
+    isLoading = false ,
+    onClear
 }: AutocompleteProps<T>) {
     const [query, setQuery] = useState(selectedValue || "");
     const [isOpen, setIsOpen] = useState(false);
@@ -109,7 +110,10 @@ export function Autocomplete<T>({
                                 "border border-base-300 bg-base-100 p-1 rounded-full cursor-pointer",
                                 "hover:bg-base-200"
                             )}
-                            onClick={() => setQuery("")}
+                            onClick={() => {
+                                setQuery("");
+                                onClear?.();
+                            }}
                         >
                             <X size={14}/>
                         </div>

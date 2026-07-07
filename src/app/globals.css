@@ -75,3 +75,10 @@
   --depth: 1;
   --noise: 0;
 }
+
+@media print {
+  @page {
+    margin: 0; /* atau margin: 5mm kalau mau sedikit ruang */
+    size: auto;
+  }
+}

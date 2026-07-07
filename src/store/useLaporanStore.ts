@@ -9,22 +9,19 @@ interface LaporanState {
     setStartDate: (date: string) => void;
     setEndDate: (date: string) => void;
     setListPelanggan: (pelanggan: DataPelanggan) => void;
+    resetLaporan: () => void;
 }
 
-export const useLaporanStore = create<LaporanState>()(
-    persist (
-        (set) => ({
-            startDate: "",
-            endDate: "",
-            listPelanggan: null,
-            setStartDate: (date) => set({ startDate: date }),
-            setEndDate: (date) => set({ endDate: date }),
-            setListPelanggan: (pelanggan) => set({ listPelanggan: pelanggan })
-        }),
-        {
-            name: "koperasi-laporan-storage",
-            storage: createJSONStorage(() => localStorage),
-        }
-    )
-)
- 
+export const useLaporanStore = create<LaporanState>((set) => ({
+    startDate: "",
+    endDate: "",
+    listPelanggan: null,
+    setStartDate: (date) => set({ startDate: date }),
+    setEndDate: (date) => set({ endDate: date }),
+    setListPelanggan: (pelanggan) => set({ listPelanggan: pelanggan }),
+    resetLaporan: () => set({ 
+        startDate: "", 
+        endDate: "", 
+        listPelanggan: null 
+    }),
+}));
