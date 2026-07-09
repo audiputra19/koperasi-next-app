@@ -1,12 +1,12 @@
 'use client';
 
+import logo from '@/public/images/koperasi-logo.jpg';
 import { login } from "@/src/features/auth/action";
-import { Eye, EyeOff, LockKeyhole, ShieldUser, Store } from "lucide-react";
+import { AuthState } from "@/src/types/auth";
+import { Eye, EyeOff, LockKeyhole, ShieldUser } from "lucide-react";
+import Image from "next/image";
 import { useActionState, useState } from "react";
 import { Button } from "../ui/Button";
-import { AuthState } from "@/src/types/auth";
-import Image from "next/image";
-import logo from '@/public/images/koperasi-logo.jpg';
 
 export default function LoginForm() {
     const initialState: AuthState = {};

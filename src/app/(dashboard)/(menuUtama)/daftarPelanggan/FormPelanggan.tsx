@@ -3,7 +3,7 @@
 import { Button } from '@/src/components/ui/Button';
 import { editPelanggan } from '@/src/features/menu/pelanggan/action';
 import { DaftarPelanggan, MenuState } from '@/src/types/menu';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect } from 'react';
 
 interface FormPelangganProps {
     onClose: () => void;

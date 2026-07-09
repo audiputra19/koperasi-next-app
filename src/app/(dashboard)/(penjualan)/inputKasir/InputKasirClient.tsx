@@ -3,13 +3,13 @@
 import { StepInputBarang } from "@/src/components/inputKasir/StepInputBarang";
 import { StepInputPelanggan } from "@/src/components/inputKasir/StepInputPelanggan";
 import { StepPembayaran } from "@/src/components/inputKasir/StepPembayaran";
+import { Button } from "@/src/components/ui/Button";
 import { cn } from "@/src/lib/cn";
-import { useKasirStore } from "../../../../store/useKasirStore";
 import { DaftarItem, DaftarPelanggan } from "@/src/types/menu";
+import { CreditCard, ShoppingBag, User } from "lucide-react"; // Install lucide-react jika belum
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { Button } from "@/src/components/ui/Button";
-import { ShoppingBag, User, CreditCard, AlertTriangle } from "lucide-react"; // Install lucide-react jika belum
+import { useKasirStore } from "../../../../store/useKasirStore";
 
 interface InputKasirClientProps {
     dataPelanggan: DaftarPelanggan[];

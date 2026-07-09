@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Plus } from "lucide-react";
-import { Button } from "@/src/components/ui/Button";
-import FormPelanggan from "./FormPelanggan";
 import DaftarPelangganTable from '@/src/components/daftarPelanggan/DaftarPelangganTable';
-import { DaftarPelanggan } from '@/src/types/menu';
 import Modal from '@/src/components/ui/Modal';
+import { DaftarPelanggan } from '@/src/types/menu';
+import { useState } from 'react';
+import FormPelanggan from "./FormPelanggan";
 
 interface DaftarPelangganClientProps {
     dataAwal: [];

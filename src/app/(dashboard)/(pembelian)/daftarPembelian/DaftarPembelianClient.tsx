@@ -2,7 +2,6 @@
 
 import DaftarPembelianTable from '@/src/components/pembelian/DaftarPembelianTable';
 import { DaftarPembelian } from '@/src/types/pembelian';
-import { useState } from 'react';
 
 interface DaftarPembelianClientProps {
     dataAwal: DaftarPembelian[];

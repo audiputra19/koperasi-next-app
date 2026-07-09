@@ -2,9 +2,8 @@
 
 import { BASE_URL } from "@/src/lib/apiClient";
 import { MenuState } from "@/src/types/menu";
-import { DaftarPenjualanDetail, EditKasirPayload, KasirPayload } from "@/src/types/penjualan";
+import { EditKasirPayload, KasirPayload } from "@/src/types/penjualan";
 import { revalidatePath } from "next/cache";
-import { PenjualanService } from "./penjualan.service";
 
 export async function addTransaksiKasir(
     payload: KasirPayload

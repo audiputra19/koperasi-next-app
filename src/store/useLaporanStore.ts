@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 import { DataPelanggan } from "../types/penjualan";
 
 interface LaporanState {
