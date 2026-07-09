@@ -1,33 +1,38 @@
 'use client';
 
 import { Button } from '@/src/components/ui/Button';
-import { addSupplier, editSupplier } from '@/src/features/menu/supplier/action';
+import { addItem, editItem } from '@/src/features/menu/item/action';
 import { DaftarItem, MenuState } from '@/src/types/menu';
 import { useActionState, useEffect, useState } from 'react';
 
-interface FormSupplierProps {
+interface FormItemProps {
     onClose: () => void;
     initialData: DaftarItem | null;
 }
 
-export default function FormItem({ onClose, initialData }: FormSupplierProps) {
+export default function FormItem({ onClose, initialData }: FormItemProps) {
     const isEditMode = !!initialData;
-    const actionToUse = isEditMode ? editSupplier : addSupplier;
+    const actionToUse = isEditMode ? editItem : addItem;
     const initialState: MenuState = {};
     const [state, formAction, isPending] = useActionState(actionToUse, initialState);
 
-    const [hargaBeli, setHargaBeli] = useState<number>(Number(initialData?.hargaBeli) || 0);
-    const [hargaJual, setHargaJual] = useState<number>(Number(initialData?.hargaJual) || 0);
-    
-    const hitungPersenAwal = () => {
+    // Ganti number -> number | '' supaya bisa kosong (bukan default 0)
+    const [hargaBeli, setHargaBeli] = useState<number | ''>(
+        initialData?.hargaBeli ? Number(initialData.hargaBeli) : ''
+    );
+    const [hargaJual, setHargaJual] = useState<number | ''>(
+        initialData?.hargaJual ? Number(initialData.hargaJual) : ''
+    );
+
+    const hitungPersenAwal = (): number | '' => {
         const beli = Number(initialData?.hargaBeli) || 0;
         const jual = Number(initialData?.hargaJual) || 0;
         if (beli > 0 && jual > 0) {
             return Math.round(((jual - beli) / beli) * 100);
         }
-        return 0;
+        return ''; // kosong kalau belum ada data
     };
-    const [persenUntung, setPersenUntung] = useState<number>(hitungPersenAwal());
+    const [persenUntung, setPersenUntung] = useState<number | ''>(hitungPersenAwal());
 
     useEffect(() => {
         if (state?.success) {
@@ -35,28 +40,48 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
         }
     }, [state, onClose]);
 
-    const handleHargaBeliChange = (val: number) => {
+    const handleHargaBeliChange = (raw: string) => {
+        if (raw === '') {
+            setHargaBeli('');
+            return;
+        }
+        const val = Number(raw);
         setHargaBeli(val);
-        if (persenUntung > 0) {
+
+        if (persenUntung !== '' && persenUntung > 0) {
             const hasilJual = val + (val * persenUntung) / 100;
             setHargaJual(Math.round(hasilJual));
-        } else if (hargaJual > 0) {
-            const hasilPersen = ((hargaJual - val) / val) * 100;
-            setPersenUntung(Math.round(hasilPersen) || 0);
+        } else {
+            setHargaJual(val);
         }
     };
 
-    const handlePersenChange = (persen: number) => {
+    const handlePersenChange = (raw: string) => {
+        if (raw === '') {
+            setPersenUntung('');
+            if (hargaBeli !== '') {
+                setHargaJual(hargaBeli);
+            }
+            return;
+        }
+        const persen = Number(raw);
         setPersenUntung(persen);
-        if (hargaBeli > 0) {
+
+        if (hargaBeli !== '' && hargaBeli > 0) {
             const hasilJual = hargaBeli + (hargaBeli * persen) / 100;
             setHargaJual(Math.round(hasilJual));
         }
     };
 
-    const handleHargaJualChange = (jual: number) => {
+    const handleHargaJualChange = (raw: string) => {
+        if (raw === '') {
+            setHargaJual('');
+            return;
+        }
+        const jual = Number(raw);
         setHargaJual(jual);
-        if (hargaBeli > 0) {
+
+        if (hargaBeli !== '' && hargaBeli > 0) {
             const hasilPersen = ((jual - hargaBeli) / hargaBeli) * 100;
             setPersenUntung(Math.round(hasilPersen));
         }
@@ -65,11 +90,11 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
     return (
         <form action={formAction} className="flex flex-col gap-3">
             {isEditMode && (
-                <input type="hidden" name="id_supplier" value={initialData.kode} />
+                <input type="hidden" name="id_item" defaultValue={initialData.kode} />
             )}
 
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Barcode</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Barcode</span></label>
                 <input 
                     type="text"
                     name="barcode" 
@@ -80,7 +105,7 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Nama Barang</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Nama Barang</span></label>
                 <input 
                     type="text"
                     name="nama" 
@@ -91,7 +116,7 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Jenis</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Jenis</span></label>
                 <input 
                     type="text"
                     name="jenis" 
@@ -102,7 +127,7 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Satuan</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Satuan</span></label>
                 <select 
                     name="satuan"
                     className="select select-bordered w-full bg-base-100 select-md"
@@ -118,7 +143,7 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                 </select>
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Rak</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Rak</span></label>
                 <input 
                     type="text"
                     name="rak" 
@@ -132,21 +157,21 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
             {/* Harga Beli & Harga Jual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
                 <div className="form-control w-full">
-                    <label className="label py-1"><span className="label-text font-medium">Harga Beli</span></label>
+                    <label className="label py-1"><span className="label-text font-medium text-sm">Harga Beli</span></label>
                     <input 
                         type="number"
                         name="hargaBeli" 
                         className="input input-bordered w-full bg-base-100 input-md" 
                         placeholder="0" 
                         value={hargaBeli}
-                        onChange={(e) => handleHargaBeliChange(Number(e.target.value))}
+                        onChange={(e) => handleHargaBeliChange(e.target.value)}
                         required
                     />
                 </div>
                 
                 <div className="form-control w-full">
                     <label className="label py-1">
-                        <span className="label-text font-medium text-blue-600">Keuntungan (%)</span>
+                        <span className="label-text font-medium text-blue-600 text-sm">Keuntungan (%)</span>
                     </label>
                     <div className="relative flex items-center">
                         <input 
@@ -155,27 +180,27 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                             className="input input-bordered w-full bg-base-100 input-md pr-8 font-semibold border-blue-300 focus:border-blue-500" 
                             placeholder="0" 
                             value={persenUntung}
-                            onChange={(e) => handlePersenChange(Number(e.target.value))}
+                            onChange={(e) => handlePersenChange(e.target.value)}
                         />
                         <span className="absolute right-3 text-gray-400 font-bold text-sm">%</span>
                     </div>
                 </div>
 
                 <div className="form-control w-full">
-                    <label className="label py-1"><span className="label-text font-medium">Harga Jual</span></label>
+                    <label className="label py-1"><span className="label-text font-medium text-sm">Harga Jual</span></label>
                     <input 
                         type="number"
                         name="hargaJual" 
                         className="input input-bordered w-full bg-base-100 input-md font-bold" 
                         placeholder="0" 
                         value={hargaJual}
-                        onChange={(e) => handleHargaJualChange(Number(e.target.value))}
+                        onChange={(e) => handleHargaJualChange(e.target.value)}
                         required
                     />
                 </div>
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Stok Awal</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Stok Awal</span></label>
                 <input 
                     type="number"
                     name="stok" 
@@ -186,7 +211,7 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Stok Minimal</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Stok Minimal</span></label>
                 <input 
                     type="number"
                     name="stokMinimal" 
@@ -197,7 +222,7 @@ export default function FormItem({ onClose, initialData }: FormSupplierProps) {
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Status</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Status</span></label>
                 <select 
                     name="status"
                     className="select select-bordered w-full bg-base-100 select-md"

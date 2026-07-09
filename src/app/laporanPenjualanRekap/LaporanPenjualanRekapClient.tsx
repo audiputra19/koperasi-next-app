@@ -118,7 +118,7 @@ export default function LaporanPenjualanRekapClient() {
 
     return (
         <div className="text-black bg-white w-full">
-            <div className="border border-dashed bg-white text-black min-w-max md:min-w-0">
+            <div className="border border-dashed bg-white text-black min-w-max md:min-w-0 print:min-w-full print:border-none">
                 <div className="flex justify-between p-5 gap-4">
                     <div className="flex gap-3">
                         <Image 
@@ -141,19 +141,19 @@ export default function LaporanPenjualanRekapClient() {
                     </div>
                 </div>
 
-                <div className="p-5 overflow-x-auto w-full">
-                    <table className="w-full border-collapse min-w-[800px]">
+                <div className="p-5 overflow-x-auto w-full print:p-0 print:overflow-visible">
+                    <table className="w-full border-collapse min-w-[800px] print:min-w-full print:table-fixed">
                         <thead className="border-t">
                             <tr className="text-sm text-black">
-                                <th className="px-2">No Transaksi</th>
-                                <th className="px-2">Tanggal</th>
-                                <th className="px-2">NIK</th>
-                                <th className="px-2">Nama</th>
-                                <th className="px-2">Jml Item</th>
-                                <th className="px-2">Total Akhir</th>
-                                <th className="px-2">Tunai</th>
-                                <th className="px-2">Kredit</th>
-                                <th className="px-2">QRIS</th>
+                                <th className="px-1 py-1 text-center print:w-[18%]">No Transaksi</th>
+                                <th className="px-1 py-1 text-center print:w-[18%]">Tanggal</th>
+                                <th className="px-1 py-1 text-center print:w-[10%]">NIK</th>
+                                <th className="px-1 py-1 text-center print:w-[30%]">Nama</th>
+                                <th className="px-1 py-1 text-center print:w-[8%]">Jml Item</th>
+                                <th className="px-1 py-1 text-right print:w-[12%]">Total</th>
+                                <th className="px-1 py-1 text-right print:w-[11%]">Tunai</th>
+                                <th className="px-1 py-1 text-right print:w-[11%]">Kredit</th>
+                                <th className="px-1 py-1 text-right print:w-[11%]">QRIS</th>
                             </tr>
                         </thead>
 
@@ -186,18 +186,18 @@ export default function LaporanPenjualanRekapClient() {
 
                                 return (
                                     <tr 
-                                        className="text-xs text-black"
+                                        className="text-xs text-black print:break-inside-avoid"
                                         key={item.idTransaksi}
                                     >
-                                        <td className="text-center px-2 py-1">{item.idTransaksi}</td>
-                                        <td className="text-center px-2 py-1">{tanggal}</td>
-                                        <td className="text-center px-2 py-1">{item.kdPelanggan}</td>
-                                        <td className="text-start px-2 py-1">{item.namaPelanggan}</td>
-                                        <td className="text-center px-2 py-1">{jumlahItem}</td>
-                                        <td className="text-right px-2 py-1">{item.total.toLocaleString("id-ID")}</td>
-                                        <td className="text-right px-2 py-1">{tunai.toLocaleString("id-ID")}</td>
-                                        <td className="text-right px-2 py-1">{kredit.toLocaleString("id-ID")}</td>
-                                        <td className="text-right px-2 py-1">{qris.toLocaleString("id-ID")}</td>
+                                        <td className="text-center px-1 py-1 break-all">{item.idTransaksi}</td>
+                                        <td className="text-center px-1 py-1 text-[10px] md:text-xs">{tanggal}</td>
+                                        <td className="text-center px-1 py-1 truncate">{item.kdPelanggan}</td>
+                                        <td className="text-start px-1 py-1 truncate">{item.namaPelanggan}</td>
+                                        <td className="text-center px-1 py-1">{jumlahItem}</td>
+                                        <td className="text-right px-1 py-1">{item.total.toLocaleString("id-ID")}</td>
+                                        <td className="text-right px-1 py-1">{tunai.toLocaleString("id-ID")}</td>
+                                        <td className="text-right px-1 py-1">{kredit.toLocaleString("id-ID")}</td>
+                                        <td className="text-right px-1 py-1">{qris.toLocaleString("id-ID")}</td>
                                     </tr>
                                 );
                             })}

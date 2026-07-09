@@ -15,6 +15,7 @@ export interface RestockItem {
     barcode: string;
     nama: string;
     jumlah: number;
+    stok_minimal: number;
     rak: string;
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import moment from "moment-timezone";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import logo from '@/public/images/koperasi-logo.jpg';
 import { useLaporanStore } from "@/src/store/useLaporanStore";
@@ -102,6 +102,21 @@ export default function LaporanPenjualanDetailClient() {
 
     return (
         <div className="text-black bg-white w-full">
+            <style jsx global>{`
+                @media print {
+                    thead {
+                        display: table-header-group;
+                    }
+                    tfoot {
+                        display: table-footer-group;
+                    }
+                    tbody.transaksi-group {
+                        break-inside: avoid;
+                        page-break-inside: avoid;
+                    }
+                }
+            `}</style>
+
             <div className="border border-dashed border-gray-800 bg-white text-black min-w-max md:min-w-0">
                 <div className="flex justify-between p-5 gap-4">
                     <div className="flex gap-3">
@@ -113,7 +128,7 @@ export default function LaporanPenjualanDetailClient() {
                             priority
                         />
                         <div className="w-[250px]">
-                            <p className="font-bold">LAPORAN PENJUALAN Detail</p>
+                            <p className="font-bold">LAPORAN PENJUALAN DETAIL</p>
                             <p className="text-sm font-semibold">KOPERASI KONSUMEN KARYAWAN SARANDI KARYA NUGRAHA</p>
                             <p className="text-xs">KOMPLEK SENTRIS BLOK E NO 8</p>
                             <p className="text-xs">0266-218444</p>
@@ -146,69 +161,69 @@ export default function LaporanPenjualanDetailClient() {
                                     <div className="border-t"></div>
                                 </td>
                             </tr>
-                            {dataLaporan?.map(item => {
-                                const detail = kasirDetails[item.idTransaksi];
-                                let totalJml = 0;
-                                let totalAll = 0;
-
-                                const tanggal = moment(item.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
-
-                                return (
-                                    <Fragment key={item.idTransaksi}>
-                                        <tr className="text-xs text-black">
-                                            <td className="text-center px-2 py-1">{item.idTransaksi}</td>
-                                            <td className="text-center px-2 py-1">{tanggal}</td>
-                                            <td className="text-center px-2 py-1">{item.kdPelanggan}</td>
-                                            <td className="text-start px-2 py-1">{item.namaPelanggan}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan={6} className="py-3">
-                                                <div className="p-2 border border-dashed bg-gray-50 overflow-x-auto">
-                                                    <table className="w-full min-w-[550px]">
-                                                        <thead>
-                                                            <tr className="text-xs text-black">
-                                                                <th className="px-2 text-center">No</th>
-                                                                <th className="px-2 text-center">Kd Item</th>
-                                                                <th className="px-2 text-center">Nama Item</th>
-                                                                <th className="px-2 text-center">Jml</th>
-                                                                <th className="px-2 text-center">Harga</th>
-                                                                <th className="px-2 text-center">Total</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {detail?.map((itemDetail, index) => {
-                                                                const total = itemDetail.harga * itemDetail.jumlah;
-                                                                totalJml += itemDetail.jumlah;
-                                                                totalAll += total;
-
-                                                                return (
-                                                                    <tr className="text-xs" key={itemDetail.kodeItem}>
-                                                                        <td className="text-center px-2 py-1 w-[20px]">{index + 1}</td>
-                                                                        <td className="text-center px-2 py-1 w-[50px]">{itemDetail.kodeItem}</td>
-                                                                        <td className="text-left px-2 py-1 w-[100px]">{itemDetail.namaItem}</td>
-                                                                        <td className="text-center px-2 py-1 w-[50px]">{itemDetail.jumlah.toLocaleString("id-ID")}</td>
-                                                                        <td className="text-center px-2 py-1 w-[50px]">{(itemDetail.harga ?? 0).toLocaleString("id-ID")}</td>
-                                                                        <td className="text-center px-2 py-1 w-[50px]">{total.toLocaleString("id-ID")}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                        <tfoot>
-                                                            <tr className="text-xs">
-                                                                <th colSpan={3} className="text-right px-2 py-1">Total</th>
-                                                                <th className="text-center px-2 py-1 border-t border-dashed">{totalJml.toLocaleString("id-ID")}</th>
-                                                                <th className="border-t border-dashed"></th>
-                                                                <th className="text-center px-2 py-1 border-t border-dashed">{totalAll.toLocaleString("id-ID")}</th>
-                                                            </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </Fragment>
-                                );
-                            })}
                         </tbody>
+                        {dataLaporan?.map(item => {
+                            const detail = kasirDetails[item.idTransaksi];
+                            let totalJml = 0;
+                            let totalAll = 0;
+
+                            const tanggal = moment(item.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
+
+                            return (
+                                <tbody key={item.idTransaksi} className="transaksi-group">
+                                    <tr className="text-xs text-black">
+                                        <td className="text-center px-2 py-1">{item.idTransaksi}</td>
+                                        <td className="text-center px-2 py-1">{tanggal}</td>
+                                        <td className="text-center px-2 py-1">{item.kdPelanggan}</td>
+                                        <td className="text-start px-2 py-1">{item.namaPelanggan}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={6} className="py-3">
+                                            <div className="p-2 border border-dashed bg-gray-50 overflow-x-auto">
+                                                <table className="w-full min-w-[550px]">
+                                                    <thead>
+                                                        <tr className="text-xs text-black">
+                                                            <th className="px-2 text-center w-[40px]">No</th>
+                                                            <th className="px-2 text-center w-[100px]">Kd Item</th>
+                                                            <th className="px-2 text-center w-[200px]">Nama Item</th>
+                                                            <th className="px-2 text-center w-[70px]">Jml</th>
+                                                            <th className="px-2 text-center w-[100px]">Harga</th>
+                                                            <th className="px-2 text-center w-[100px]">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {detail?.map((itemDetail, index) => {
+                                                            const total = itemDetail.harga * itemDetail.jumlah;
+                                                            totalJml += itemDetail.jumlah;
+                                                            totalAll += total;
+
+                                                            return (
+                                                                <tr className="text-xs" key={itemDetail.kodeItem}>
+                                                                    <td className="text-center px-2 py-1 truncate">{index + 1}</td>
+                                                                    <td className="text-center px-2 py-1 truncate">{itemDetail.kodeItem}</td>
+                                                                    <td className="text-left px-2 py-1 break-words">{itemDetail.namaItem}</td>
+                                                                    <td className="text-center px-2 py-1">{itemDetail.jumlah.toLocaleString("id-ID")}</td>
+                                                                    <td className="text-center px-2 py-1">{(itemDetail.harga ?? 0).toLocaleString("id-ID")}</td>
+                                                                    <td className="text-center px-2 py-1">{total.toLocaleString("id-ID")}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr className="text-xs">
+                                                            <th colSpan={3} className="text-right px-2 py-1">Total</th>
+                                                            <th className="text-center px-2 py-1 border-t border-dashed">{totalJml.toLocaleString("id-ID")}</th>
+                                                            <th className="border-t border-dashed"></th>
+                                                            <th className="text-center px-2 py-1 border-t border-dashed">{totalAll.toLocaleString("id-ID")}</th>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            );
+                        })}
                     </table>
                 </div>
             </div>

@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { Plus } from "lucide-react";
 import { Button } from "@/src/components/ui/Button";
-import Modal from "@/src/components/common/Modal";
 import FormPelanggan from "./FormPelanggan";
 import DaftarPelangganTable from '@/src/components/daftarPelanggan/DaftarPelangganTable';
 import { DaftarPelanggan } from '@/src/types/menu';
+import Modal from '@/src/components/ui/Modal';
 
 interface DaftarPelangganClientProps {
     dataAwal: [];
@@ -33,7 +33,7 @@ export default function DaftarPelangganClient({ dataAwal }: DaftarPelangganClien
                 dataAwal={dataAwal} 
                 onEdit={handleOpenEditModal}
             />
-
+            
             <Modal 
                 isOpen={isModalOpen} 
                 onClose={handleCloseModal} 

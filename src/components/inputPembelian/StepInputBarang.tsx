@@ -5,19 +5,20 @@ import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarItem } from "@/src/types/menu";
 import { EditPembelianPayload, PembelianPayload } from "@/src/types/pembelian";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { ClipboardPen, Minus, Plus, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Autocomplete } from "../common/AutoComplete";
 import { Button } from "../ui/Button";
+import { Autocomplete } from "../ui/AutoComplete";
 
 interface StepInputItemProps {
     dataItem: DaftarItem[];
     initialUser: { nama: string } | null;
+    onEditHarga: (item: string) => void;
 }
 
-export function StepInputBarang({ dataItem, initialUser }: StepInputItemProps) {
+export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInputItemProps) {
     const { 
         addBarang,
         listSupplier, 
@@ -164,7 +165,22 @@ export function StepInputBarang({ dataItem, initialUser }: StepInputItemProps) {
                                     <td className="p-3 font-mono text-xs min-w-[100px]">{item.kodeItem}</td>
                                     <td className="p-3 font-medium min-w-[200px]">{item.namaItem}</td>
                                     <td className="p-3 font-medium min-w-[100px]">{item.jenis}</td>
-                                    <td className="p-3 text-right min-w-[100px]">Rp {item.harga.toLocaleString()}</td>
+                                    <td className="p-3 text-right min-w-[150px]">
+                                        <div className={cn(
+                                            !isEditMode && "flex justify-end items-center gap-3"
+                                        )}>
+                                            Rp {item.harga.toLocaleString()}
+                                            {!isEditMode && (
+                                                <div className="tooltip" data-tip="Edit Harga">
+                                                    <ClipboardPen
+                                                        className="text-primary cursor-pointer p-1 rounded hover:bg-base-300"
+                                                        size={25} 
+                                                        onClick={() => onEditHarga(item.kodeItem)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
                                     
                                     {/* Edit Kuantitas/Jumlah */}
                                     <td className="p-3 text-center">
@@ -213,15 +229,17 @@ export function StepInputBarang({ dataItem, initialUser }: StepInputItemProps) {
                                         Rp {(item.harga * item.jumlah).toLocaleString()}
                                     </td>
                                     <td className="p-3 text-center">
-                                        <button 
-                                            onClick={() => removeBarang(item.kodeItem)}
-                                            className={cn(
-                                                "rounded p-1.5 cursor-pointer",
-                                                "hover:bg-base-300"
-                                            )}
-                                        >
-                                            <Trash2 size={18}/>
-                                        </button>
+                                        <div className="tooltip" data-tip="Hapus">
+                                            <button 
+                                                onClick={() => removeBarang(item.kodeItem)}
+                                                className={cn(
+                                                    "rounded p-1.5 cursor-pointer",
+                                                    "hover:bg-base-300"
+                                                )}
+                                            >
+                                                <Trash2 size={18}/>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

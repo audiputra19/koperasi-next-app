@@ -3,12 +3,16 @@
 import { StepInputBarang } from "@/src/components/inputPembelian/StepInputBarang";
 import { StepInputSupplier } from "@/src/components/inputPembelian/StepInputSupplier";
 import { Button } from "@/src/components/ui/Button";
+import Modal from "@/src/components/ui/Modal";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarItem, DaftarSupplier } from "@/src/types/menu";
 import { ShoppingBag, User } from "lucide-react"; // Install lucide-react jika belum
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import FormInputHarga from "./FormInputHarga";
+import { HargaItem } from "@/src/types/pembelian";
+import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 
 interface InputPembelianClientProps {
     dataSupplier: DaftarSupplier[];
@@ -22,6 +26,10 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
     const idTransaksi = searchParams.get("id");
     const isEditMode = !!idTransaksi;
     const { step, resetPembelian } = usePembelianStore((state) => state);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<DaftarItem | null>(null);
+    const [hargaItem, setHargaItem] = useState<HargaItem[]>([]);
+    // console.log(selectedItem)
 
     useEffect(() => {
         if (!idTransaksi) {
@@ -34,6 +42,19 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
         router.push("/daftarPembelian");
     };
 
+    const handleOpenEditModal = async (item: string) => {
+        const foundHargaItem = await PembelianService.getHargaItem(item);
+        const foundItem = dataItem.find((i) => i.kode === item) ?? null;
+        setSelectedItem(foundItem);
+        setHargaItem(foundHargaItem);
+        setIsModalOpen(true);
+    }
+
+    const handleCloseModal = () => {
+        setSelectedItem(null);
+        setIsModalOpen(false);
+    };
+
     const stepsConfig = [
         { id: 1, label: "Supplier", icon: User },
         { id: 2, label: "Pilih Barang", icon: ShoppingBag },
@@ -44,7 +65,7 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
             case 1:
                 return <StepInputSupplier dataSupplier={dataSupplier} />;
             case 2:    
-                return <StepInputBarang dataItem={dataItem} initialUser={initialUser} />;
+                return <StepInputBarang dataItem={dataItem} initialUser={initialUser} onEditHarga={handleOpenEditModal} />;
             default:
                 return <div className="p-8 text-center text-gray-500">Langkah tidak ditemukan</div>;        
         }
@@ -107,6 +128,18 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
             <div className="transition-all duration-300 animate-in fade-in-50 slide-in-from-bottom-2">
                 {renderStepContent()}
             </div>
+
+            <Modal 
+                isOpen={isModalOpen} 
+                onClose={handleCloseModal} 
+                title={selectedItem ? "Edit Harga Item" : ""}
+            >
+                <FormInputHarga 
+                    onClose={handleCloseModal} 
+                    initialData={selectedItem}
+                    hargaItem={hargaItem}
+                />
+            </Modal>
         </div>
     );
 }

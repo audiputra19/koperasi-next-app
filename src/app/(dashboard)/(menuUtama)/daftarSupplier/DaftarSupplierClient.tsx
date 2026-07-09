@@ -1,12 +1,12 @@
 'use client';
 
-import Modal from '@/src/components/common/Modal';
 import DaftarSupplierTable from '@/src/components/daftarSupplier/DaftarSupplierTable';
 import { Button } from '@/src/components/ui/Button';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import FormSupplier from './FormSupplier';
 import { DaftarSupplier } from '@/src/types/menu';
+import Modal from '@/src/components/ui/Modal';
 
 interface DaftarSupplierClientProps {
     dataAwal: DaftarSupplier[];

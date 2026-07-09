@@ -24,7 +24,7 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
         <form action={formAction} className="flex flex-col gap-4">
 
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">ID Pelanggan</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">ID Pelanggan</span></label>
                 <input 
                     type="text" 
                     name="id_pelanggan"
@@ -34,7 +34,7 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Nama Pelanggan</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Nama Pelanggan</span></label>
                 <input 
                     type="text" 
                     name="nama_pelanggan"
@@ -44,7 +44,7 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Group Pelanggan</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Group Pelanggan</span></label>
                 <select 
                     name="id_kategori"
                     className="select select-bordered w-full bg-base-100"
@@ -55,7 +55,7 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
                 </select>
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Limit Belanja</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Limit Belanja</span></label>
                 <input 
                     type="number"
                     name="limit_belanja" 
@@ -65,7 +65,7 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Bisa Kredit?</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Bisa Kredit?</span></label>
                 <select 
                     className="select select-bordered w-full bg-base-100"
                     name="kredit"

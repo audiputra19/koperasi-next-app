@@ -53,3 +53,10 @@ export interface DaftarPembelianDetail {
     harga: number;
     expiredDate?: string;
 }
+
+export interface HargaItem {
+    kdItem: string;
+    tanggal: string;
+    hargaBeli: number;
+    hargaJual: number;
+}

@@ -2,8 +2,8 @@
 
 import { useKasirStore } from "@/src/store/useKasirStore";
 import { DaftarPelanggan } from "@/src/types/menu";
-import { Autocomplete } from "../common/AutoComplete";
 import { Button } from "../ui/Button";
+import { Autocomplete } from "../ui/AutoComplete";
 
 interface StepInputPelangganProps {
     dataPelanggan: DaftarPelanggan[];

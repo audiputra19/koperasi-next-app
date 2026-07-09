@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import moment from "moment-timezone";
-import { Autocomplete } from "@/src/components/common/AutoComplete";
 import { useLaporanStore } from "@/src/store/useLaporanStore";
 import { DaftarPelanggan } from "@/src/types/menu";
 import { Printer } from "lucide-react";
+import { Autocomplete } from "@/src/components/ui/AutoComplete";
 
 interface DaftarLaporanClientProps {
     dataPelanggan: DaftarPelanggan[];
@@ -55,7 +55,7 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
                         </label>
                         <input 
                             type="date" 
-                            className="input border border-base-300 w-full text-gray-700 focus:input-primary h-11" 
+                            className="input border border-base-300 text-gray-500 w-full focus:input-primary h-11" 
                             value={startDate || ""} 
                             onChange={(e) => setStartDate(e.target.value)} 
                         />
@@ -69,7 +69,7 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
                         </label>
                         <input 
                             type="date" 
-                            className="input border border-base-300 w-full text-gray-700 focus:input-primary h-11" 
+                            className="input border border-base-300 text-gray-500 w-full focus:input-primary h-11" 
                             value={endDate || ""} 
                             onChange={(e) => setEndDate(e.target.value)} 
                         />
@@ -96,12 +96,12 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
                     </div>
                 </div>
 
-                <div className="flex flex-wrap sm:flex-nowrap gap-3 pt-4 lg:pt-0 border-t border-gray-100 lg:border-t-0 justify-end">
+                <div className="flex flex-wrap sm:flex-nowrap gap-3 pt-4 lg:pt-0 border-t border-base-300 lg:border-t-0 justify-end">
                     <div className="flex rounded-lg overflow-hidden border border-base-300">
                         <button
                             type="button"
                             onClick={() => handleNavigasi("/laporanPenjualanDetail", false)}
-                            className="btn btn-ghost bg-base-100 hover:bg-primary/10 text-indigo-700 rounded-none border-none h-11 min-h-0 normal-case px-4 font-medium"
+                            className="btn btn-ghost bg-base-100 hover:bg-primary/10 text-primary rounded-none border-none h-11 min-h-0 normal-case px-4 font-medium"
                         >
                             Lihat Detail
                         </button>

@@ -41,41 +41,43 @@ export default function Navbar({ session }: NavbarProps) {
                     </button>
                     <h1 className="font-bold">{formattedTitle}</h1>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-400 text-white font-bold"
-                        >
-                        {session?.nama.charAt(0)?.toUpperCase()}
-                    </div>
-                    <div>
-                        <p className="text-sm font-bold text-slate-800">{session?.nama}</p>
-                    </div>
-                    <div className="dropdown dropdown-bottom dropdown-end">
-                        <div tabIndex={0} className="cursor-pointer p-2 rounded-full hover:bg-gray-100">
-                            <ChevronDown size={20} />
+                <div className="hidden sm:block">
+                    <div className="flex items-center gap-2">
+                        <div
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-400 text-white font-bold"
+                            >
+                            {session?.nama.charAt(0)?.toUpperCase()}
                         </div>
-                        <ul tabIndex={0} className="dropdown-content gap-2 menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-xl border border-gray-200 mt-5">
-                            <li>
-                                <a><User size={20}/>Profile</a>
-                            </li>
-                            <li>
-                                <Link href="/settings">
-                                    <Settings2 size={20} />Settings
-                                </Link>
-                            </li>
-                            <li className="border-t border-gray-200 pt-2">
-                                <form action={formAction}>
-                                    <button
-                                        type="submit"
-                                        disabled={isPending}
-                                        className="w-full flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <LogOut size={20} />
-                                        {isPending ? "Logging out..." : "Logout"}
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
+                        <div>
+                            <p className="text-sm font-bold">{session?.nama}</p>
+                        </div>
+                        <div className="dropdown dropdown-bottom dropdown-end">
+                            <div tabIndex={0} className="cursor-pointer p-2 rounded-full hover:bg-base-300">
+                                <ChevronDown size={20} />
+                            </div>
+                            <ul tabIndex={0} className="dropdown-content gap-2 menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-xl border border-base-300 mt-5">
+                                {/* <li>
+                                    <a><User size={20}/>Profile</a>
+                                </li> */}
+                                <li>
+                                    <Link href="/settings">
+                                        <Settings2 size={20} />Settings
+                                    </Link>
+                                </li>
+                                <li className="border-t border-base-300 pt-2">
+                                    <form action={formAction}>
+                                        <button
+                                            type="submit"
+                                            disabled={isPending}
+                                            className="w-full flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <LogOut size={20} />
+                                            {isPending ? "Logging out..." : "Logout"}
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

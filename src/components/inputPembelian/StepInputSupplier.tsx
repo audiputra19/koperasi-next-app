@@ -2,8 +2,8 @@
 
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarSupplier } from "@/src/types/menu";
-import { Autocomplete } from "../common/AutoComplete";
 import { Button } from "../ui/Button";
+import { Autocomplete } from "../ui/AutoComplete";
 
 interface StepInputSupplierProps {
     dataSupplier: DaftarSupplier[];

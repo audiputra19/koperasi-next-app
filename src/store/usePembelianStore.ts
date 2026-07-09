@@ -24,6 +24,7 @@ interface PembelianState {
     addBarang: (barangBaru: Omit<DataPembelian, "jumlah">) => void; 
     updateQtyBarang: (kodeItem: string, jumlahBaru: number) => void;
     updateExpireDateBarang: (kodeItem: string, dateBaru: string) => void;
+    updateHargaBarang: (kodeItem: string, hargaBaru: number) => void;
     removeBarang: (kodeItem: string) => void;
     setMetode: (metodePilihan: string) => void;
     
@@ -81,6 +82,13 @@ export const usePembelianStore = create<PembelianState>()(
                     b.kodeItem === kodeItem ? { ...b, expireDate: dateBaru } : b
                 )
             })),
+            updateHargaBarang: (kodeItem, hargaBaru) => set((state) => {
+                const updatedList = state.listBarang.map((b) => 
+                    b.kodeItem === kodeItem ? { ...b, harga: hargaBaru } : b
+                );
+                const newTotal = updatedList.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
+                return { listBarang: updatedList, total: newTotal };
+            }),
             removeBarang: (kodeItem) => set((state) => {
                 const updatedList = state.listBarang.filter((b) => b.kodeItem !== kodeItem);
                 const newTotal = updatedList.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);

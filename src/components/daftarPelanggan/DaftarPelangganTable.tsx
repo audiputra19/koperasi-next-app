@@ -1,9 +1,9 @@
 'use client';
 
-import DataTable, { TableColumn } from "@/src/components/common/DataTable";
 import { cn } from "@/src/lib/cn";
 import { DaftarPelanggan } from "@/src/types/menu";
 import { SquarePen } from "lucide-react";
+import DataTable, { TableColumn } from "../ui/DataTable";
 
 type TablePelanggan = DaftarPelanggan & Record<string, unknown>;
 
@@ -49,15 +49,17 @@ export default function DaftarPelangganTable({ dataAwal , onEdit}: DaftarPelangg
             header: 'ACTION', 
             className: 'text-center',
             renderCell: (p) => (
-                <button 
-                    className={cn(
-                        "p-1.5 rounded cursor-pointer",
-                        "hover:bg-base-300"
-                    )}
-                    onClick={() => onEdit(p)}
-                >
-                    <SquarePen size={20}/>
-                </button> 
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => onEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
+                </div>
             )
         },
     ];

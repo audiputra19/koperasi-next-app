@@ -1,6 +1,6 @@
 'use client';
 
-import Modal from "@/src/components/common/Modal";
+import Modal from "@/src/components/ui/Modal";
 import DaftarItemTable from '@/src/components/daftarItem/DaftarItemTable';
 import { Button } from "@/src/components/ui/Button";
 import { DaftarItem } from '@/src/types/menu';
@@ -53,7 +53,7 @@ export default function DaftarItemClient({ dataAwal }: DaftarItemClientProps) {
             <Modal 
                 isOpen={isModalOpen} 
                 onClose={handleCloseModal} 
-                title={selectedItem ? "Edit Data Item" : "Tambah Item Baru"}
+                title={selectedItem ? "Edit Data Harga" : "Tambah Item Baru"}
             >
                 <FormItem 
                     onClose={handleCloseModal} 

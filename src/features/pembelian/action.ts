@@ -60,11 +60,40 @@ export async function editTransaksiPembelian(
     }
 }
 
-export async function getDetailPembelianAction(idTransaksi: string): Promise<DaftarPembelianDetail[]> {
+export async function addHargaItem(
+    prevState: MenuState | null,
+    formData: FormData
+): Promise<MenuState> {
+    const kdItem = formData.get("kdItem");
+    const hargaBeli = formData.get("hargaBeli");
+    const hargaJual = formData.get("hargaJual");
+
     try {
-        return await PembelianService.getDaftarPembelianDetail(idTransaksi);
+        const response = await fetch(`${BASE_URL}/input-hargaitem`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({
+                kdItem,
+                hargaBeli,
+                hargaJual
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            return { error: result.message || "Gagal menambahkan harga item ke server." };
+        }
+
+        revalidatePath("/daftarPembelian");
+        
+        return { success: result.message || "Harga item berhasil ditambahkan" };
+        
     } catch (error) {
-        console.error("Server Action Detail Error:", error);
-        throw new Error("Gagal terhubung ke server");
+        console.error("Add Harga Item Error:", error);
+        return { error: "Gagal terhubung ke server." };
     }
 }

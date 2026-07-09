@@ -1,5 +1,5 @@
 import { apiFetch } from "@/src/lib/apiClient"
-import { DaftarPembelian, DaftarPembelianDetail } from "@/src/types/pembelian"
+import { DaftarPembelian, DaftarPembelianDetail, HargaItem } from "@/src/types/pembelian"
 
 export const PembelianService = {
     getDaftarPembelian: async(): Promise<DaftarPembelian[]> => {
@@ -15,6 +15,16 @@ export const PembelianService = {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ idTransaksi }),
+            cache: 'no-store'
+        })
+    },
+    getHargaItem: async(kdItem: string): Promise<HargaItem[]> => {
+        return apiFetch<HargaItem[]>('/get-hargaitem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ kdItem }),
             cache: 'no-store'
         })
     },

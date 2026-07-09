@@ -1,7 +1,7 @@
 'use client';
 
-import DataTable, { TableColumn } from "@/src/components/common/DataTable";
-import { getDetailPembelianAction } from "@/src/features/pembelian/action";
+import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
+import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarPembelian, DataPembelian, DataSupplier } from "@/src/types/pembelian";
@@ -27,7 +27,7 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
                 namaSupplier: String(p.namaSupplier)
             };
 
-            const responseDetail = await getDetailPembelianAction(p.idTransaksi);
+            const responseDetail = await PembelianService.getDaftarPembelianDetail(p.idTransaksi);
 
             const dataBarang: DataPembelian[] = responseDetail.map((detail) => ({
                 kodeItem: detail.kodeItem,
@@ -75,14 +75,14 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
         { 
             header: 'NAMA SUPPLIER', 
             sortKey: 'namaSupplier', 
-            className: 'text-center',
+            className: 'text-start min-w-[250px]',
             renderCell: (p) => p.namaSupplier
         },
         { 
             header: 'TOTAL', 
             sortKey: 'total', 
-            className: 'text-center',
-            renderCell: (p) => p.total
+            className: 'text-right',
+            renderCell: (p) => p.total.toLocaleString("id-ID")
         },
         { 
             header: 'USER BUAT', 
@@ -100,15 +100,17 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
             header: 'ACTION', 
             className: 'text-center',
             renderCell: (p) => (
-                <button 
-                    className={cn(
-                        "p-1.5 rounded cursor-pointer",
-                        "hover:bg-base-300"
-                    )}
-                    onClick={() => handleEdit(p)}
-                >
-                    <SquarePen size={20}/>
-                </button> 
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
+                </div>
             )
         },
     ];

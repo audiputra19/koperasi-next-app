@@ -59,12 +59,3 @@ export async function editTransaksiKasir(
         return { error: "Gagal terhubung ke server." };
     }
 }
-
-export async function getDetailPenjualanAction(idTransaksi: string): Promise<DaftarPenjualanDetail[]> {
-    try {
-        return await PenjualanService.getDaftarPenjualanDetail(idTransaksi);
-    } catch (error) {
-        console.error("Server Action Detail Error:", error);
-        throw new Error("Gagal terhubung ke server");
-    }
-}

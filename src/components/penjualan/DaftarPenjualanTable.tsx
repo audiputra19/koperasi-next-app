@@ -1,7 +1,7 @@
 'use client';
 
-import DataTable, { TableColumn } from "@/src/components/common/DataTable";
-import { getDetailPenjualanAction } from "@/src/features/penjualan/action";
+import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
+import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
 import { cn } from "@/src/lib/cn";
 import { useKasirStore } from "@/src/store/useKasirStore";
 import { DaftarPenjualan, DataKasir, DataPelanggan } from "@/src/types/penjualan";
@@ -27,7 +27,7 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
                 namaPelanggan: String(p.namaPelanggan)
             };
 
-            const responseDetail = await getDetailPenjualanAction(p.idTransaksi);
+            const responseDetail = await PenjualanService.getDaftarPenjualanDetail(p.idTransaksi);
             console.log("Raw Response dari DB:", responseDetail);
 
             const dataBarang: DataKasir[] = responseDetail.map((detail) => ({
@@ -75,14 +75,14 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
         { 
             header: 'NAMA PELANGGAN', 
             sortKey: 'namaPelanggan', 
-            className: 'text-center',
+            className: 'text-start',
             renderCell: (p) => p.namaPelanggan
         },
         { 
             header: 'TOTAL', 
             sortKey: 'total', 
-            className: 'text-center',
-            renderCell: (p) => p.total
+            className: 'text-right',
+            renderCell: (p) => p.total.toLocaleString("id-ID")
         },
         { 
             header: 'USER BUAT', 
@@ -100,15 +100,17 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
             header: 'ACTION', 
             className: 'text-center',
             renderCell: (p) => (
-                <button 
-                    className={cn(
-                        "p-1.5 rounded cursor-pointer",
-                        "hover:bg-base-300"
-                    )}
-                    onClick={() => handleEdit(p)}
-                >
-                    <SquarePen size={20}/>
-                </button> 
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
+                </div>
             )
         },
     ];

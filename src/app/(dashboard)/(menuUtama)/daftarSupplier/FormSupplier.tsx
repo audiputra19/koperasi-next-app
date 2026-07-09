@@ -29,7 +29,7 @@ export default function FormSupplier({ onClose, initialData }: FormSupplierProps
             )}
 
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Nama Supplier</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Nama Supplier</span></label>
                 <input 
                     type="text"
                     name="nama_supplier" 
@@ -40,7 +40,7 @@ export default function FormSupplier({ onClose, initialData }: FormSupplierProps
                 />
             </div>
             <div className="form-control w-full">
-                <label className="label py-1"><span className="label-text font-medium">Alamat</span></label>
+                <label className="label py-1"><span className="label-text font-medium text-sm">Alamat</span></label>
                 <textarea 
                     name="alamat"
                     className="textarea w-full bg-base-100"

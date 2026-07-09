@@ -4,8 +4,8 @@ import { cn } from "@/src/lib/cn";
 import { useKasirStore } from "@/src/store/useKasirStore";
 import { DaftarItem } from "@/src/types/menu";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { Autocomplete } from "../common/AutoComplete";
 import { Button } from "../ui/Button";
+import { Autocomplete } from "../ui/AutoComplete";
 
 interface StepInputItemProps {
     dataItem: DaftarItem[];
@@ -111,15 +111,17 @@ export function StepInputBarang({ dataItem }: StepInputItemProps) {
                                         Rp {(item.harga * item.jumlah).toLocaleString()}
                                     </td>
                                     <td className="p-3 text-center">
-                                        <button 
-                                            onClick={() => removeBarang(item.kodeItem)}
-                                            className={cn(
-                                                "rounded p-1.5 cursor-pointer",
-                                                "hover:bg-base-300"
-                                            )}
-                                        >
-                                            <Trash2 size={18}/>
-                                        </button>
+                                        <div className="tooltip" data-tip="Hapus">
+                                            <button 
+                                                onClick={() => removeBarang(item.kodeItem)}
+                                                className={cn(
+                                                    "rounded p-1.5 cursor-pointer",
+                                                    "hover:bg-base-300"
+                                                )}
+                                            >
+                                                <Trash2 size={18}/>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

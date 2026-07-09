@@ -1,6 +1,6 @@
 'use client';
 
-import DataTable, { TableColumn } from "@/src/components/common/DataTable";
+import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
 import { cn } from "@/src/lib/cn";
 import { DaftarItem } from "@/src/types/menu";
 import { SquarePen } from "lucide-react";
@@ -60,14 +60,14 @@ export default function DaftarItemTable({ dataAwal, onEdit }: DaftarItemTablePro
         { 
             header: 'HARGA BELI', 
             sortKey: 'hargaBeli', 
-            className: 'text-center',
-            renderCell: (p) => p.hargaBeli 
+            className: 'text-right',
+            renderCell: (p) => p.hargaBeli.toLocaleString("id-ID")
         },
         { 
             header: 'HARGA JUAL', 
             sortKey: 'hargaJual', 
-            className: 'text-center',
-            renderCell: (p) => p.hargaJual 
+            className: 'text-right',
+            renderCell: (p) => p.hargaJual.toLocaleString("id-ID")
         },
         { 
             header: 'STOK MINIMUM', 
@@ -85,15 +85,17 @@ export default function DaftarItemTable({ dataAwal, onEdit }: DaftarItemTablePro
             header: 'ACTION', 
             className: 'text-center',
             renderCell: (p) => (
-                <button 
-                    className={cn(
-                        "p-1.5 rounded cursor-pointer",
-                        "hover:bg-base-300"
-                    )}
-                    onClick={() => onEdit(p)}
-                >
-                    <SquarePen size={20}/>
-                </button> 
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => onEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
+                </div>
             )
         },
     ];

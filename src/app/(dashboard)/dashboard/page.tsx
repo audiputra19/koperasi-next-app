@@ -111,6 +111,7 @@ export default async function DashboardPage() {
                                         <tr className="border-b border-base-300 text-center text-base-content/60">
                                             <th className="pb-2">Barcode</th>
                                             <th className="pb-2">Nama Barang</th>
+                                            <th className="pb-2">Minimum Stok</th>
                                             <th className="pb-2">Jumlah</th>
                                             <th className="pb-2">Rak</th>
                                         </tr>
@@ -121,7 +122,8 @@ export default async function DashboardPage() {
                                                 <tr key={idx} className="border-b border-base-200 last:border-none">
                                                     <td className="py-3 font-mono text-sm text-center min-w-[100px]">{item.barcode}</td>
                                                     <td className="py-3 font-medium min-w-[200px]">{item.nama}</td>
-                                                    <td className="py-3 text-center">{item.jumlah}</td>
+                                                    <td className="py-3 text-center">{item.stok_minimal}</td>
+                                                    <td className="py-3 text-center text-error font-bold">{item.jumlah}</td>
                                                     <td className="py-3 text-center">{item.rak}</td>
                                                 </tr>
                                             ))
@@ -173,7 +175,7 @@ export default async function DashboardPage() {
                                                     </td>
                                                     <td className="py-3 text-center">{item.jumlah}</td>
                                                     <td className="py-3 text-center">{item.rak}</td>
-                                                    <td className="py-3 text-center">{moment(item.expiredDate).format("YYYY-MM-DD")}</td>
+                                                    <td className="py-3 text-center text-error font-bold">{moment(item.expiredDate).format("YYYY-MM-DD")}</td>
                                                 </tr>
                                             ))
                                         ) : (

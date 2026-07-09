@@ -6,7 +6,8 @@ import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ExtendedDropdownProps extends SidebarDropdownProps {
     isCollapsed: boolean;
@@ -17,14 +18,27 @@ export default function SidebarDropdown({ item, isCollapsed }: ExtendedDropdownP
     const { closeSidebar } = useSidebarMobile();
     const isChildActive = item.subMenu?.some((sub) => pathname === sub.path) ?? false;
     const [isOpen, setIsOpen] = useState<boolean>(() => isChildActive);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     const isDropdownOpen = !isCollapsed && isOpen;
-     
+
+    const handleMouseEnter = () => {
+        if (!isCollapsed || !wrapperRef.current) return;
+        const rect = wrapperRef.current.getBoundingClientRect();
+        setTooltipPos({ top: rect.top + rect.height / 2, left: rect.right + 10 });
+        setShowTooltip(true);
+    };
+
+    const handleMouseLeave = () => setShowTooltip(false);
+
     return (
         <div className="w-full">
             <div
-                className={clsx(isCollapsed && "tooltip tooltip-right")}
-                data-tip={item.name}
+                ref={wrapperRef}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             >
                 <button
                     onClick={() => !isCollapsed && setIsOpen(!isOpen)}
@@ -35,12 +49,12 @@ export default function SidebarDropdown({ item, isCollapsed }: ExtendedDropdownP
                     )}
                 >
                     <div className={clsx("flex items-center layout-container", !isCollapsed && "gap-5")}>
-                        <span className={clsx("shrink-0 block", 
+                        <span className={clsx("shrink-0 block",
                             isChildActive ? "text-primary" : (isCollapsed ? "text-base-content" : "text-gray-400")
                         )}>
                             {item.icon}
                         </span>
-                        
+
                         <span className={clsx(
                             "truncate text-left",
                             isCollapsed ? "w-0 opacity-0 invisible" : "w-auto opacity-100 visible",
@@ -49,7 +63,7 @@ export default function SidebarDropdown({ item, isCollapsed }: ExtendedDropdownP
                             {item.name}
                         </span>
                     </div>
-                    
+
                     <ChevronDown
                         size={16}
                         className={clsx(
@@ -62,6 +76,16 @@ export default function SidebarDropdown({ item, isCollapsed }: ExtendedDropdownP
                 </button>
             </div>
 
+            {isCollapsed && showTooltip && typeof document !== "undefined" && createPortal(
+                <div
+                    className="fixed z-[9999] px-2.5 py-1.5 rounded-md bg-neutral text-neutral-content text-xs font-medium whitespace-nowrap shadow-lg pointer-events-none"
+                    style={{ top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-50%)" }}
+                >
+                    {item.name}
+                </div>,
+                document.body
+            )}
+
             <div
                 className={clsx(
                     "border-l-2 border-base-300 ml-5.5 pl-5 space-y-1 transition-all duration-300 overflow-hidden",
@@ -70,7 +94,7 @@ export default function SidebarDropdown({ item, isCollapsed }: ExtendedDropdownP
             >
                 {item.subMenu?.map((sub) => {
                     const isSubActive = pathname === sub.path;
-                    
+
                     return (
                         <Link
                             key={sub.id}
@@ -82,8 +106,8 @@ export default function SidebarDropdown({ item, isCollapsed }: ExtendedDropdownP
                             }}
                             className={clsx(
                                 "block px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors",
-                                isSubActive 
-                                    ? "bg-primary text-primary-content" 
+                                isSubActive
+                                    ? "bg-primary text-primary-content"
                                     : "text-gray-400 hover:bg-base-300"
                             )}
                         >

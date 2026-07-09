@@ -2,6 +2,7 @@ import { MenuService } from "@/src/features/menu/menu.service";
 import { cn } from "@/src/lib/cn";
 import { InputPembelianClient } from "./inputPembelianClient";
 import { getSession } from "@/src/lib/session";
+import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 
 export default async function InputPembelian() {
     const daftarSupplier = await MenuService.getDaftarSupplier();
