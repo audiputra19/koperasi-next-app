@@ -5,9 +5,10 @@ import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarPembelian, DataPembelian, DataSupplier } from "@/src/types/pembelian";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type TablePembelian = DaftarPembelian & Record<string, unknown>;
 
@@ -18,6 +19,7 @@ interface DaftarPembelianTableProps {
 export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableProps) {
     const router = useRouter();
     const { setInitialDataForEdit } = usePembelianStore();
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleEdit = async (p: TablePembelian) => {
         
@@ -30,6 +32,7 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
             const responseDetail = await PembelianService.getDaftarPembelianDetail(p.idTransaksi);
 
             const dataBarang: DataPembelian[] = responseDetail.map((detail) => ({
+                barcode: detail.barcode,
                 kodeItem: detail.kodeItem,
                 namaItem: detail.namaItem,
                 jenis: detail.jenis || "",
@@ -52,8 +55,61 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
             alert("Terjadi kesalahan saat memuat detail barang.");
         }
     };
+
+    const handleDelete = async (idTransaksi: string) => {
+        const confirmed = window.confirm(`Apakah Anda yakin ingin menghapus transaksi ${idTransaksi}?`);
+        if (!confirmed) return;
+
+        try {
+            setIsDeleting(true);
+
+            const res = await PembelianService.deletePembelian(idTransaksi);
+
+            alert(res?.message || "Data transaksi berhasil dihapus.");
+
+            router.refresh();
+
+            // alert("Data transaksi berhasil dihapus.");
+        } catch (error) {
+            console.error("Gagal menghapus transaksi:", error);
+            // alert("Terjadi kesalahan saat menghapus data.");
+        } finally {
+            setIsDeleting(false);
+        }
+    }
     
     const columns: TableColumn<TablePembelian>[] = [
+        { 
+            header: 'ACTION', 
+            className: 'text-center',
+            renderCell: (p) => (
+                <div className="flex gap-1 items-center">
+                    <div className="tooltip" data-tip="Edit">
+                        <button 
+                            className={cn(
+                                "p-1.5 rounded cursor-pointer",
+                                "hover:bg-base-300"
+                            )}
+                            onClick={() => handleEdit(p)}
+                        >
+                            <SquarePen size={20}/>
+                        </button> 
+                    </div>
+                    <div className="tooltip" data-tip="Hapus">
+                        <button 
+                            disabled={isDeleting}
+                            className={cn(
+                                "p-1.5 rounded cursor-pointer",
+                                "hover:bg-base-300"
+                            )}
+                            onClick={() => handleDelete(p.idTransaksi)}
+                        >
+                            <Trash2 size={20}/>
+                        </button> 
+                    </div>
+                </div>
+            )
+        },
         { 
             header: 'NO. TRANSAKSI', 
             sortKey: 'noTransaksi', 
@@ -95,23 +151,6 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
             sortKey: 'userUbah', 
             className: 'text-center',
             renderCell: (p) => p.userUbah
-        },
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
-                        onClick={() => handleEdit(p)}
-                    >
-                        <SquarePen size={20}/>
-                    </button> 
-                </div>
-            )
         },
     ];
 

@@ -4,6 +4,9 @@ export interface DaftarPelanggan {
     idKategori: number;
     limitBelanja: number;
     kredit: number;
+    role: string;
+    password: string;
+    sumber: string;
 }
 
 export interface DaftarSupplier {

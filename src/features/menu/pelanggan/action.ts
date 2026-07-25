@@ -12,6 +12,8 @@ export async function editPelanggan (
     const idKategori = formData.get("id_kategori");
     const limitBelanja = formData.get("limit_belanja");
     const kredit = formData.get("kredit");
+    const role = formData.get("role");
+    const password = formData.get("password");
 
     if(!id) {
         return { error: "ID Pelanggan tidak ditemukan" };
@@ -32,7 +34,9 @@ export async function editPelanggan (
                 kode: id,
                 idKategori: idKategori,
                 limitBelanja: limitBelanja,
-                kredit: kredit
+                kredit: kredit,
+                role: role,
+                password: password,
             })
         });
 

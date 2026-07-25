@@ -29,8 +29,7 @@ export async function createSession(userId: string, userInfo: Omit<UserData, 'id
     const session = await encrypt({ 
         userId, 
         nama: userInfo.nama,
-        hakAkses: userInfo.hak_akses,
-        kategori: userInfo.kategori,
+        role: userInfo.role,
         expiresAt 
     });
 

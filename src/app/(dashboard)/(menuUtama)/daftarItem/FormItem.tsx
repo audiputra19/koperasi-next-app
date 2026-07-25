@@ -101,7 +101,6 @@ export default function FormItem({ onClose, initialData }: FormItemProps) {
                     className="input input-bordered w-full bg-base-100 input-md" 
                     placeholder="Masukan barcode barang..." 
                     defaultValue={initialData?.barcode}
-                    required
                 />
             </div>
             <div className="form-control w-full">

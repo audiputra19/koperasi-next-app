@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "../../lib/session";
 import bcrypt from "bcryptjs";
 import { AuthState, UserData } from "../../types/auth";
+import { BASE_URL } from "@/src/lib/apiClient";
 
 export async function login(prevState: AuthState | null, formData: FormData): Promise<AuthState> {
     const userId = formData.get("userId");
@@ -14,7 +15,7 @@ export async function login(prevState: AuthState | null, formData: FormData): Pr
     }
 
     try {
-        const response = await fetch(`https://api-koperasi-psi.vercel.app/auth/user`, {
+        const response = await fetch(`${BASE_URL}/auth/user`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -41,8 +42,7 @@ export async function login(prevState: AuthState | null, formData: FormData): Pr
 
         await createSession(matchedUser.id.toString(), {
             nama: matchedUser.nama,
-            hak_akses: matchedUser.hak_akses,
-            kategori: matchedUser.kategori
+            role: matchedUser.role
         });
 
     } catch (error) {

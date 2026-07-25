@@ -2,7 +2,7 @@
 
 import { useKasirStore } from "@/src/store/useKasirStore";
 import { addTransaksiKasir, editTransaksiKasir } from "@/src/features/penjualan/action";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { KasirPayload, EditKasirPayload } from "@/src/types/penjualan";
 import { Button } from "../ui/Button";
@@ -33,6 +33,12 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
     const router = useRouter();
 
     const showAlert = (msg: string) => alert(msg);
+
+    useEffect(() => {
+        if (!metode) {
+            setMetode("2");
+        }
+    }, [metode, setMetode]);
 
     const handleBayar = async () => {
         if (!listPelanggan || !listPelanggan.kodePelanggan || !listPelanggan.namaPelanggan) {
@@ -89,7 +95,7 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
             } else if (result.success) {
                 showAlert(result.success);
                 resetKasir();
-                router.push("/daftarPenjualan");
+                router.push("/inputKasir");
             }
         });
     };
@@ -116,7 +122,6 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                     className="border border-base-300 p-2.5 rounded-lg w-full bg-base-100 text-sm outline-none focus:ring-2 focus:ring-blue-300"
                     disabled={isPending}
                 >
-                    <option value="">-- Pilih Metode --</option>
                     <option value="1">Tunai (Cash)</option>
                     <option value="2">Kredit</option>
                     <option value="3">QRIS / E-Wallet</option>

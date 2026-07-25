@@ -16,6 +16,25 @@ export default function DaftarPelangganTable({ dataAwal , onEdit}: DaftarPelangg
     
     const columns: TableColumn<TablePelanggan>[] = [
         { 
+            header: 'ACTION', 
+            className: 'text-center',
+            renderCell: (p) => (
+                p.sumber === 'umum' ? null : (
+                    <div className="tooltip" data-tip="Edit">
+                        <button 
+                            className={cn(
+                                "p-1.5 rounded cursor-pointer",
+                                "hover:bg-base-300"
+                            )}
+                            onClick={() => onEdit(p)}
+                        >
+                            <SquarePen size={20}/>
+                        </button> 
+                    </div>
+                )
+            )
+        },
+        { 
             header: 'KODE', 
             sortKey: 'kode', 
             className: 'text-center',
@@ -46,21 +65,16 @@ export default function DaftarPelangganTable({ dataAwal , onEdit}: DaftarPelangg
             renderCell: (p) => p.kredit === 1 ? "Ya" : "Tidak" 
         },
         { 
-            header: 'ACTION', 
-            className: 'text-center',
+            header: 'ROLE', 
+            sortKey: 'role', 
+            className: 'text-center min-w-[150px]',
             renderCell: (p) => (
-                <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
-                        onClick={() => onEdit(p)}
-                    >
-                        <SquarePen size={20}/>
-                    </button> 
-                </div>
-            )
+                p.sumber === 'umum' 
+                ? "Non Anggota" 
+                : (
+                    p.role ? p.role : "Anggota"
+                )
+            ) 
         },
     ];
 

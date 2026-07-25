@@ -22,7 +22,11 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
 
     return (
         <form action={formAction} className="flex flex-col gap-4">
-
+            {state?.error && (
+                <div className="alert alert-error text-sm">
+                    {state.error}
+                </div>
+            )}
             <div className="form-control w-full">
                 <label className="label py-1"><span className="label-text font-medium text-sm">ID Pelanggan</span></label>
                 <input 
@@ -61,7 +65,7 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
                     name="limit_belanja" 
                     className="input input-bordered w-full bg-base-100 input-md" 
                     placeholder="0" 
-                    defaultValue={initialData?.limitBelanja}
+                    defaultValue={initialData?.limitBelanja ?? 0}
                 />
             </div>
             <div className="form-control w-full">
@@ -74,6 +78,39 @@ export default function FormPelanggan({ onClose, initialData }: FormPelangganPro
                     <option value={0}>Tidak</option>
                     <option value={1}>Ya</option>
                 </select>
+            </div>
+            <div className="form-control w-full">
+                <label className="label py-1"><span className="label-text font-medium text-sm">Role</span></label>
+                <select 
+                    className="select select-bordered w-full bg-base-100"
+                    name="role"
+                    defaultValue={initialData?.role}
+                >
+                    <option value="">Anggota</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Kasir">Kasir</option>
+                    <option value="Pengawas">Pengawas</option>
+                </select>
+            </div>
+            <div className="form-control w-full">
+                <label className="label py-1">
+                    <span className="label-text font-medium text-sm">
+                    Password 
+                    {initialData?.password && (
+                        <span className="text-xs text-success font-normal ml-2">
+                        ✓ Password sudah tersimpan
+                        </span>
+                    )}
+                    </span>
+                </label>
+
+                <input 
+                    type="password"
+                    name="password" 
+                    className="input input-bordered w-full bg-base-100 input-md" 
+                    placeholder={initialData?.password ? "•••••••• (Isi untuk mengubah)" : "Masukkan password baru"}
+                    defaultValue=""
+                />
             </div>
 
             <div className="flex justify-end gap-2 border-t border-base-300 pt-4 mt-2">

@@ -4,15 +4,13 @@ export interface UserData {
     id: number;
     nama: string;
     password?: string;
-    hak_akses: number;
-    kategori: number;
+    role: string;
 }
 
 export interface SessionPayload extends JWTPayload {
     userId: string;
     nama: string;
-    hakAkses: number;
-    kategori: number;
+    role: string;
     expiresAt: Date;
 }
 

@@ -1,4 +1,5 @@
 export interface DataPembelian {
+    barcode: string;
     kodeItem: string;
     namaItem: string;
     jenis: string;
@@ -44,8 +45,8 @@ export interface DaftarPembelian {
 }
 
 export interface DaftarPembelianDetail {
-    kodeItem: string;
     barcode: string;
+    kodeItem: string;
     namaItem: string;
     jenis: string;
     jumlah: number;
@@ -59,4 +60,8 @@ export interface HargaItem {
     tanggal: string;
     hargaBeli: number;
     hargaJual: number;
+}
+
+export interface DeletePembelian {
+    message: string;
 }

@@ -5,9 +5,10 @@ import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
 import { cn } from "@/src/lib/cn";
 import { useKasirStore } from "@/src/store/useKasirStore";
 import { DaftarPenjualan, DataKasir, DataPelanggan } from "@/src/types/penjualan";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type TablePenjualan = DaftarPenjualan & Record<string, unknown>;
 
@@ -18,6 +19,7 @@ interface DaftarPenjualanTableProps {
 export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableProps) {
     const router = useRouter();
     const { setInitialDataForEdit } = useKasirStore();
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleEdit = async (p: TablePenjualan) => {
         
@@ -52,8 +54,61 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
             alert("Terjadi kesalahan saat memuat detail barang.");
         }
     };
+
+    const handleDelete = async (idTransaksi: string) => {
+        const confirmed = window.confirm(`Apakah Anda yakin ingin menghapus transaksi ${idTransaksi}?`);
+        if (!confirmed) return;
+
+        try {
+            setIsDeleting(true);
+
+            const res = await PenjualanService.deletePenjualan(idTransaksi);
+
+            alert(res?.message || "Data transaksi berhasil dihapus.");
+
+            router.refresh();
+
+            // alert("Data transaksi berhasil dihapus.");
+        } catch (error) {
+            console.error("Gagal menghapus transaksi:", error);
+            // alert("Terjadi kesalahan saat menghapus data.");
+        } finally {
+            setIsDeleting(false);
+        }
+    }
     
     const columns: TableColumn<TablePenjualan>[] = [
+        { 
+            header: 'ACTION', 
+            className: 'text-center',
+            renderCell: (p) => (
+                <div className="flex gap-1 items-center">
+                    <div className="tooltip" data-tip="Edit">
+                        <button 
+                            className={cn(
+                                "p-1.5 rounded cursor-pointer",
+                                "hover:bg-base-300"
+                            )}
+                            onClick={() => handleEdit(p)}
+                        >
+                            <SquarePen size={20}/>
+                        </button> 
+                    </div>
+                    <div className="tooltip" data-tip="Hapus">
+                        <button 
+                            disabled={isDeleting}
+                            className={cn(
+                                "p-1.5 rounded cursor-pointer",
+                                "hover:bg-base-300"
+                            )}
+                            onClick={() => handleDelete(p.idTransaksi)}
+                        >
+                            <Trash2 size={20}/>
+                        </button> 
+                    </div>
+                </div>
+            )
+        },
         { 
             header: 'NO. TRANSAKSI', 
             sortKey: 'noTransaksi', 
@@ -87,31 +142,14 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
         { 
             header: 'USER BUAT', 
             sortKey: 'userBuat', 
-            className: 'text-center',
+            className: 'text-center min-w-[200px]',
             renderCell: (p) => p.userBuat
         },
         { 
             header: 'USER UBAH', 
             sortKey: 'userUbah', 
-            className: 'text-center',
+            className: 'text-center min-w-[200px]',
             renderCell: (p) => p.userUbah
-        },
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
-                        onClick={() => handleEdit(p)}
-                    >
-                        <SquarePen size={20}/>
-                    </button> 
-                </div>
-            )
         },
     ];
 

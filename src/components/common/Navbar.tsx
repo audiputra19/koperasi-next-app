@@ -1,13 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { Button } from "../ui/Button";
-import { useActionState } from "react";
+import { useSidebarMobile } from "@/src/context/SidebarContext";
 import { logout } from "@/src/features/auth/action";
 import { AuthState, SessionPayload } from "@/src/types/auth";
-import { ChevronDown, LogOut, Menu, Settings2, User } from "lucide-react";
-import { useSidebarMobile } from "@/src/context/SidebarContext";
+import { ChevronDown, LogOut, Menu, Settings2 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useActionState } from "react";
 
 interface NavbarProps {
     session: SessionPayload | null
@@ -49,7 +48,8 @@ export default function Navbar({ session }: NavbarProps) {
                             {session?.nama.charAt(0)?.toUpperCase()}
                         </div>
                         <div>
-                            <p className="text-sm font-bold">{session?.nama}</p>
+                            <p className="text-sm font-bold">{session?.nama?.split(" ").slice(0, 2).join(" ")}</p>
+                            <p className="text-xs font-medium text-gray-400">{session?.role ? session.role : "Anggota"}</p>
                         </div>
                         <div className="dropdown dropdown-bottom dropdown-end">
                             <div tabIndex={0} className="cursor-pointer p-2 rounded-full hover:bg-base-300">
@@ -64,18 +64,18 @@ export default function Navbar({ session }: NavbarProps) {
                                         <Settings2 size={20} />Settings
                                     </Link>
                                 </li>
-                                <li className="border-t border-base-300 pt-2">
-                                    <form action={formAction}>
-                                        <button
-                                            type="submit"
-                                            disabled={isPending}
-                                            className="w-full flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            <LogOut size={20} />
-                                            {isPending ? "Logging out..." : "Logout"}
-                                        </button>
-                                    </form>
-                                </li>
+                                <form action={formAction}>
+                                    <li className="border-t border-base-300 pt-2">
+                                            <button
+                                                type="submit"
+                                                disabled={isPending}
+                                                className="w-full flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <LogOut size={20} />
+                                                {isPending ? "Logging out..." : "Logout"}
+                                            </button>
+                                    </li>
+                                </form>
                             </ul>
                         </div>
                     </div>

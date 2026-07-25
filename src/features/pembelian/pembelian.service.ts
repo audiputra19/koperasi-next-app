@@ -1,5 +1,5 @@
 import { apiFetch } from "@/src/lib/apiClient"
-import { DaftarPembelian, DaftarPembelianDetail, HargaItem } from "@/src/types/pembelian"
+import { DaftarPembelian, DaftarPembelianDetail, DeletePembelian, HargaItem } from "@/src/types/pembelian"
 
 export const PembelianService = {
     getDaftarPembelian: async(): Promise<DaftarPembelian[]> => {
@@ -28,4 +28,24 @@ export const PembelianService = {
             cache: 'no-store'
         })
     },
+    deletePembelian: async (idTransaksi: string): Promise<DeletePembelian> => {
+        return apiFetch<DeletePembelian>('/delete-pembelian', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ idTransaksi }),
+            cache: 'no-store'
+        })
+    },
+    // deletePembelianDetail: async (idTransaksi: string): Promise<DeletePembelian> => {
+    //     return apiFetch<DeletePembelian>('/delete-pembeliandetail', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({ idTransaksi }),
+    //         cache: 'no-store'
+    //     })
+    // }
 }

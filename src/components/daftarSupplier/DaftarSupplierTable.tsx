@@ -16,6 +16,23 @@ export default function DaftarSupplierTable({ dataAwal, onEdit }: DaftarSupplier
     
     const columns: TableColumn<TableSupplier>[] = [
         { 
+            header: 'ACTION', 
+            className: 'text-center',
+            renderCell: (p) => (
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => onEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
+                </div>
+            )
+        },
+        { 
             header: 'KODE', 
             sortKey: 'kode', 
             className: 'text-center min-w-[100px]',
@@ -32,23 +49,6 @@ export default function DaftarSupplierTable({ dataAwal, onEdit }: DaftarSupplier
             sortKey: 'alamat', 
             className: 'text-start min-w-[300px]',
             renderCell: (p) => p.alamat
-        },
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
-                        onClick={() => onEdit(p)}
-                    >
-                        <SquarePen size={20}/>
-                    </button> 
-                </div>
-            )
         },
     ];
 

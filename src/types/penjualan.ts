@@ -50,4 +50,9 @@ export interface DaftarPenjualanDetail {
     jumlah: number;
     satuan: string
     harga: number;
+    harga_beli: number;
+}
+
+export interface DeletePenjualan {
+    message: string;
 }
