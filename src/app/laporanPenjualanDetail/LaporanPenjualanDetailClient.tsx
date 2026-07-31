@@ -10,6 +10,7 @@ import { LaporanService } from "@/src/features/laporan/laporan.service";
 import { DataLaporan } from "@/src/types/laporan";
 import { DaftarPenjualanDetail } from "@/src/types/penjualan";
 import Image from "next/image";
+import { Spinner } from "@/src/components/ui/Spinner";
 
 export default function LaporanPenjualanDetailClient() {
     const searchParams = useSearchParams();
@@ -99,6 +100,16 @@ export default function LaporanPenjualanDetailClient() {
             };
         }
     }, [autoPrint, kasirLoading, loadingDetail, date1, date2, router]);
+
+    const isDataLoading = kasirLoading || loadingDetail;
+    
+    if (isDataLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[300px] w-full gap-3 py-10">
+                <Spinner />
+            </div>
+        );
+    }
 
     return (
         <div className="text-black bg-white w-full">

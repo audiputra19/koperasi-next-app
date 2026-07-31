@@ -12,6 +12,7 @@ import { DaftarPenjualanDetail } from "@/src/types/penjualan";
 import Image from "next/image";
 import { DaftarPembelianDetail } from "@/src/types/pembelian";
 import { PembelianService } from "@/src/features/pembelian/pembelian.service";
+import { Spinner } from "@/src/components/ui/Spinner";
 
 export default function LaporanKasirClient() {
     const searchParams = useSearchParams();
@@ -147,6 +148,16 @@ export default function LaporanKasirClient() {
             };
         }
     }, [autoPrint, kasirLoading, loadingDetail, date1, date2, router]);
+
+    const isDataLoading = kasirLoading || loadingDetail;
+    
+    if (isDataLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[300px] w-full gap-3 py-10">
+                <Spinner />
+            </div>
+        );
+    }
 
     // Penjualan
     const totalItem = dataLaporan?.reduce((total, item) => {

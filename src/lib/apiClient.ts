@@ -1,5 +1,5 @@
-// export const BASE_URL = 'http://localhost:3001';
-export const BASE_URL = 'https://api-koperasi-psi.vercel.app';
+export const BASE_URL = 'http://localhost:3001';
+// export const BASE_URL = 'https://api-koperasi-psi.vercel.app';
 
 export async function apiFetch<T>(endpoint: string, option?: RequestInit): Promise<T> {
     const defaultHeader = {
