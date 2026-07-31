@@ -9,12 +9,14 @@ import { Loader2, Printer, SheetIcon } from "lucide-react";
 import { Autocomplete } from "@/src/components/ui/AutoComplete";
 // import { exportRugiLabaExcel } from "@/src/features/laporan/excel/rugiLabaExcel";
 import { exportRekapExcel } from "@/src/features/laporan/excel/rekapExcel";
+import { SessionPayload } from "@/src/types/auth";
 
 interface DaftarLaporanClientProps {
     dataPelanggan: DaftarPelanggan[];
+    session: SessionPayload | null;
 }
 
-export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClientProps) {
+export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLaporanClientProps) {
     const router = useRouter();
     // const [exportingRugiLaba, setExportingRugiLaba] = useState(false);
     const [exportingRekap, setExportingRekap] = useState(false);
@@ -27,6 +29,9 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
         setListPelanggan,
     } = useLaporanStore();
 
+    const isAnggota = session?.role === "Anggota";
+    const isKasir = session?.role === "Kasir";
+
     useEffect(() => {
         if (!startDate) {
             const tgl1 = moment().tz("Asia/Jakarta").startOf("month").format("YYYY-MM-DD");
@@ -37,6 +42,15 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
             setEndDate(tglHariIni);
         }
     }, [startDate, endDate, setStartDate, setEndDate]);
+
+    useEffect(() => {
+        if((isAnggota || isKasir) && session.userId) {
+            setListPelanggan({
+                kodePelanggan: session.userId,
+                namaPelanggan: session.nama
+            })
+        }
+    }, []);
 
     const handleNavigasi = (path: string, autoPrint: boolean) => {
         if (!startDate || !endDate) {
@@ -84,11 +98,10 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
     return (
         <div className="w-full max-w-5xl bg-base-100 border border-base-300 rounded-lg p-6">
             <h2 className="text-lg font-bold mb-5">Laporan Penjualan</h2>
-            
             <div className="flex flex-col gap-5">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                     <div className="flex flex-col sm:flex-row sm:items-end gap-4 flex-1">
-                        <div className="flex flex-col gap-1.5 flex-1">
+                        <div className="flex flex-col gap-1.5">
                             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Periode Awal
                             </label>
@@ -102,7 +115,7 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
                         
                         <div className="hidden sm:block pb-3 font-medium text-gray-400">-</div>
                         
-                        <div className="flex flex-col gap-1.5 flex-1">
+                        <div className="flex flex-col gap-1.5">
                             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 Periode Akhir
                             </label>
@@ -113,26 +126,27 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
                                 onChange={(e) => setEndDate(e.target.value)} 
                             />
                         </div>
-                        
-                        <div className="flex flex-col gap-1.5 flex-1 min-w-[400px]">
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                Filter Pelanggan
-                            </label>
-                            <Autocomplete 
-                                options={dataPelanggan}
-                                placeholder="Semua Pelanggan"
-                                selectedValue={listPelanggan?.namaPelanggan || ""}
-                                valueKey="kode"
-                                labelKey="nama"
-                                onSelect={(pelanggan) => {
-                                    setListPelanggan({
-                                        kodePelanggan: pelanggan.kode,
-                                        namaPelanggan: pelanggan.nama
-                                    });
-                                }}
-                                onClear={() => setListPelanggan({ kodePelanggan: "", namaPelanggan: "" })}
-                            />
-                        </div>
+                        {(!isAnggota && !isKasir) && (
+                            <div className="flex flex-col gap-1.5 flex-1 lg:max-w-[400px]">
+                                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                    Filter Pelanggan
+                                </label>
+                                <Autocomplete 
+                                    options={dataPelanggan}
+                                    placeholder="Semua Pelanggan"
+                                    selectedValue={listPelanggan?.namaPelanggan || ""}
+                                    valueKey="kode"
+                                    labelKey="nama"
+                                    onSelect={(pelanggan) => {
+                                        setListPelanggan({
+                                            kodePelanggan: pelanggan.kode,
+                                            namaPelanggan: pelanggan.nama
+                                        });
+                                    }}
+                                    onClear={() => setListPelanggan({ kodePelanggan: "", namaPelanggan: "" })}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div> 
                 <div className="flex flex-col gap-3">
@@ -181,33 +195,54 @@ export default function DaftarLaporanClient({ dataPelanggan }: DaftarLaporanClie
                             </button>
                         </div>
                     </div>
+                    {(!isAnggota && !isKasir) && (
+                        <div className="flex justify-between rounded-lg overflow-hidden border border-base-300">
+                            <button
+                                type="button"
+                                onClick={() => handleNavigasi("/laporanRugiLaba", false)}
+                                className="flex-1 justify-start btn btn-ghost bg-base-100 hover:bg-primary/10 text-primary rounded-none border-none h-11 min-h-0 normal-case px-4 font-medium"
+                            >
+                                Laporan Rugi Laba
+                            </button>
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleNavigasi("/laporanRugiLaba", true)}
+                                    className="btn btn-primary bg-primary hover:bg-primary/70 text-white rounded-none border-none h-11 min-h-0 px-3"
+                                    title="Cetak Laporan Rugi Laba"
+                                >
+                                    <Printer size={16} />
+                                </button>
+                                {/* <button
+                                    type="button"
+                                    onClick={handleExportRugiLabaExcel}
+                                    disabled={exportingRugiLaba}
+                                    className="btn btn-primary bg-emerald-600 hover:bg-emerald-500 text-white rounded-none border-none h-11 min-h-0 px-3"
+                                    title="Excel Laporan Rugi Laba"
+                                >
+                                    {exportingRugiLaba ? <Loader2 size={16} className="animate-spin" /> : <SheetIcon size={16} />}
+                                </button> */}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex justify-between rounded-lg overflow-hidden border border-base-300">
                         <button
                             type="button"
-                            onClick={() => handleNavigasi("/laporanRugiLaba", false)}
+                            onClick={() => handleNavigasi("/laporanKasir", false)}
                             className="flex-1 justify-start btn btn-ghost bg-base-100 hover:bg-primary/10 text-primary rounded-none border-none h-11 min-h-0 normal-case px-4 font-medium"
                         >
-                            Laporan Rugi Laba
+                            Laporan Kasir 
                         </button>
                         <div>
                             <button
                                 type="button"
-                                onClick={() => handleNavigasi("/laporanRugiLaba", true)}
+                                onClick={() => handleNavigasi("/laporanPenjualanRekap", true)}
                                 className="btn btn-primary bg-primary hover:bg-primary/70 text-white rounded-none border-none h-11 min-h-0 px-3"
-                                title="Cetak Laporan Rugi Laba"
+                                title="Cetak Laporan Kasir"
                             >
                                 <Printer size={16} />
                             </button>
-                            {/* <button
-                                type="button"
-                                onClick={handleExportRugiLabaExcel}
-                                disabled={exportingRugiLaba}
-                                className="btn btn-primary bg-emerald-600 hover:bg-emerald-500 text-white rounded-none border-none h-11 min-h-0 px-3"
-                                title="Excel Laporan Rugi Laba"
-                            >
-                                {exportingRugiLaba ? <Loader2 size={16} className="animate-spin" /> : <SheetIcon size={16} />}
-                            </button> */}
                         </div>
                     </div>
                 </div>

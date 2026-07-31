@@ -7,12 +7,14 @@ import { useState } from 'react';
 import FormSupplier from './FormSupplier';
 import { DaftarSupplier } from '@/src/types/menu';
 import Modal from '@/src/components/ui/Modal';
+import { SessionPayload } from '@/src/types/auth';
 
 interface DaftarSupplierClientProps {
     dataAwal: DaftarSupplier[];
+    session: SessionPayload | null;
 }
 
-export default function DaftarSupplierClient({ dataAwal }: DaftarSupplierClientProps) {
+export default function DaftarSupplierClient({ dataAwal, session }: DaftarSupplierClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState<DaftarSupplier | null>(null);
 
@@ -48,6 +50,7 @@ export default function DaftarSupplierClient({ dataAwal }: DaftarSupplierClientP
             <DaftarSupplierTable 
                 dataAwal={dataAwal} 
                 onEdit={handleOpenEditModal}
+                session={session}
             />
 
             <Modal

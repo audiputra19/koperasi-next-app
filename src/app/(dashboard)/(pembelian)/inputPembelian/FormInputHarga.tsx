@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/src/components/ui/Button';
+import { useToast } from '@/src/context/ToastContext';
 import { addHargaItem } from '@/src/features/pembelian/action';
 import { usePembelianStore } from '@/src/store/usePembelianStore';
 import { DaftarItem, MenuState } from '@/src/types/menu';
@@ -22,14 +23,18 @@ export default function FormInputHarga({ onClose, initialData, hargaItem }: Form
     const [hargaBeli, setHargaBeli] = useState<number | ''>('');
     const [hargaJual, setHargaJual] = useState<number | ''>('');
     const [persenUntung, setPersenUntung] = useState<number | ''>('');
-
+    const { showToast } = useToast();
+    
     useEffect(() => {
         if (state?.success) {
             if (initialData?.kode && hargaJual !== '') {
-                updateHargaBarang(initialData.kode, Number(hargaJual)); 
+                updateHargaBarang(initialData.kode, Number(hargaBeli)); 
             }
-            
+            showToast(typeof state.success === "string" ? state.success : "Berhasil disimpan.", "success");
             onClose();
+        }
+        if (state?.error) {
+            showToast(state.error, "error");
         }
     }, [state, onClose, initialData, hargaJual, updateHargaBarang]);
 

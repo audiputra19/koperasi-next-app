@@ -2,6 +2,7 @@
 
 import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
 import { cn } from "@/src/lib/cn";
+import { SessionPayload } from "@/src/types/auth";
 import { DaftarSupplier } from "@/src/types/menu";
 import { SquarePen } from "lucide-react";
 
@@ -10,28 +11,33 @@ type TableSupplier = DaftarSupplier & Record<string, unknown>;
 interface DaftarSupplierTableProps {
     dataAwal: DaftarSupplier[];
     onEdit: (supplier: DaftarSupplier) => void;
+    session: SessionPayload | null;
 }
 
-export default function DaftarSupplierTable({ dataAwal, onEdit }: DaftarSupplierTableProps) {
+export default function DaftarSupplierTable({ dataAwal, onEdit, session }: DaftarSupplierTableProps) {
+    const isAdmin = session?.role === "Admin";
+    const isKasir = session?.role === "Kasir";
+    const canEdit = isAdmin || isKasir;
+
+    const actionColumn: TableColumn<TableSupplier> = {
+        header: 'ACTION',
+        className: 'text-center',
+        renderCell: (p) => (
+            <div className="tooltip" data-tip="Edit">
+                <button 
+                    className={cn(
+                        "p-1.5 rounded cursor-pointer",
+                        "hover:bg-base-300"
+                    )}
+                    onClick={() => onEdit(p)}
+                >
+                    <SquarePen size={20}/>
+                </button> 
+            </div>
+        )
+    };
     
-    const columns: TableColumn<TableSupplier>[] = [
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
-                        onClick={() => onEdit(p)}
-                    >
-                        <SquarePen size={20}/>
-                    </button> 
-                </div>
-            )
-        },
+    const dataColumns: TableColumn<TableSupplier>[] = [
         { 
             header: 'KODE', 
             sortKey: 'kode', 
@@ -51,6 +57,10 @@ export default function DaftarSupplierTable({ dataAwal, onEdit }: DaftarSupplier
             renderCell: (p) => p.alamat
         },
     ];
+
+    const columns: TableColumn<TableSupplier>[] = canEdit
+        ? [actionColumn, ...dataColumns]
+        : dataColumns;
 
     return (
         <DataTable<TableSupplier>

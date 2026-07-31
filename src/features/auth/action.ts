@@ -3,8 +3,9 @@
 import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "../../lib/session";
 import bcrypt from "bcryptjs";
-import { AuthState, UserData } from "../../types/auth";
+import { AuthState, Role, UserData } from "../../types/auth";
 import { BASE_URL } from "@/src/lib/apiClient";
+import { getDefaultRoute } from "@/src/lib/roleAccess";
 
 export async function login(prevState: AuthState | null, formData: FormData): Promise<AuthState> {
     const userId = formData.get("userId");
@@ -13,6 +14,8 @@ export async function login(prevState: AuthState | null, formData: FormData): Pr
     if(!userId || !password) {
         return { error: "Semua field harus diisi." }
     }
+
+    let matchedUser: UserData | undefined;
 
     try {
         const response = await fetch(`${BASE_URL}/auth/user`, {
@@ -28,7 +31,7 @@ export async function login(prevState: AuthState | null, formData: FormData): Pr
 
         const userList: UserData[] = await response.json();
 
-        const matchedUser = userList.find((user) => user.id.toString() === userId.toString());
+        matchedUser = userList.find((user) => user.id.toString() === userId.toString());
 
         if(!matchedUser || !matchedUser.password) {
             return { error: "ID atau password salah." };
@@ -50,7 +53,7 @@ export async function login(prevState: AuthState | null, formData: FormData): Pr
         return { error: "Gagal terhubung ke server." };
     }
 
-    redirect("/dashboard");
+    return { success: "Login berhasil.", redirectTo: getDefaultRoute(matchedUser.role as Role) };
 }
 
 export async function logout(prevState: AuthState, formData: FormData): Promise<AuthState> {

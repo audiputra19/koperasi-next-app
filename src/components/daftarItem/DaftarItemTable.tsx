@@ -2,6 +2,7 @@
 
 import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
 import { cn } from "@/src/lib/cn";
+import { SessionPayload } from "@/src/types/auth";
 import { DaftarItem } from "@/src/types/menu";
 import { SquarePen } from "lucide-react";
 
@@ -10,28 +11,33 @@ type TableItem = DaftarItem & Record<string, unknown>;
 interface DaftarItemTableProps {
     dataAwal: DaftarItem[];
     onEdit: (item: DaftarItem) => void;
+    session: SessionPayload | null;
 }
 
-export default function DaftarItemTable({ dataAwal, onEdit }: DaftarItemTableProps) {
-    
-    const columns: TableColumn<TableItem>[] = [
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
-                        onClick={() => onEdit(p)}
-                    >
-                        <SquarePen size={20}/>
-                    </button> 
-                </div>
-            )
-        },
+export default function DaftarItemTable({ dataAwal, onEdit, session }: DaftarItemTableProps) {
+    const isAdmin = session?.role === "Admin";
+    const isKasir = session?.role === "Kasir";
+    const canEdit = isAdmin || isKasir;
+
+    const actionColumn: TableColumn<TableItem> = {
+        header: 'ACTION',
+        className: 'text-center',
+        renderCell: (p) => (
+            <div className="tooltip" data-tip="Edit">
+                <button
+                    className={cn(
+                        "p-1.5 rounded cursor-pointer",
+                        "hover:bg-base-300"
+                    )}
+                    onClick={() => onEdit(p)}
+                >
+                    <SquarePen size={20}/>
+                </button>
+            </div>
+        )
+    };
+
+    const dataColumns: TableColumn<TableItem>[] = [
         { 
             header: 'KODE', 
             sortKey: 'kode', 
@@ -99,6 +105,10 @@ export default function DaftarItemTable({ dataAwal, onEdit }: DaftarItemTablePro
             renderCell: (p) => p.status === 1 ? "Masih Dijual" : "Tidak Dijual"
         },
     ];
+
+    const columns: TableColumn<TableItem>[] = canEdit
+        ? [actionColumn, ...dataColumns]
+        : dataColumns;
 
     return (
         <DataTable<TableItem>

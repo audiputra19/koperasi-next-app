@@ -21,7 +21,7 @@ export default async function DashboardLayout({
                     {children}
                 </div>
                 <div className="sm:hidden bg-red-500">
-                    <TabBarMobile />
+                    <TabBarMobile session={session} />
                 </div>
             </div>
         </SidebarProvider>

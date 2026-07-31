@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/src/components/ui/Button';
+import { useToast } from '@/src/context/ToastContext';
 import { addSupplier, editSupplier } from '@/src/features/menu/supplier/action';
 import { DaftarSupplier, MenuState } from '@/src/types/menu';
 import { useActionState, useEffect } from 'react';
@@ -15,12 +16,17 @@ export default function FormSupplier({ onClose, initialData }: FormSupplierProps
     const actionToUse = isEditMode ? editSupplier : addSupplier;
     const initialState: MenuState = {};
     const [state, formAction, isPending] = useActionState(actionToUse, initialState);
-
+    const { showToast } = useToast();
+    
     useEffect(() => {
         if (state?.success) {
+            showToast(typeof state.success === "string" ? state.success : "Berhasil disimpan.", "success");
             onClose();
         }
-    }, [state, onClose]);
+        if (state?.error) {
+            showToast(state.error, "error");
+        }
+    }, [state]);
 
     return (
         <form action={formAction} className="flex flex-col gap-3">

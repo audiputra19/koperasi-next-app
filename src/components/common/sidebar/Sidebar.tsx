@@ -4,7 +4,7 @@ import logo from '@/public/images/koperasi-logo.jpg';
 import { useSidebarMobile } from "@/src/context/SidebarContext";
 import { logout } from '@/src/features/auth/action';
 import { cn } from "@/src/lib/cn";
-import { AuthState, SessionPayload } from '@/src/types/auth';
+import { AuthState, Role, SessionPayload } from '@/src/types/auth';
 import { MenuItem, MenuItemWithDropdown, SidebarMenuItem } from "@/src/types/sidebar";
 import { ChevronDown, FileText, Layers, LayoutDashboard, LogOut, Package, PanelLeftClose, PanelLeftOpen, Settings2, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useActionState, useState } from "react";
 import SidebarDropdown from "./SidebarDropdown";
 import SidebarLink from "./SidebarLink";
+import { routeAccess } from '@/src/lib/roleAccess';
 
 interface SidebarProps {
     session: SessionPayload | null
@@ -22,13 +23,14 @@ export default function Sidebar({ session }: SidebarProps) {
     const { isMobileOpen, closeSidebar } = useSidebarMobile();
     const initialState: AuthState = {};
     const [state, formAction, isPending] = useActionState(logout, initialState);
+    const role = (session?.role as Role) ?? "";
     
     const menuData: SidebarMenuItem[] = [
         {
             id: '1',
             name: 'Dashboard',
             icon: <LayoutDashboard size={22} />,
-            path: '/dashboard'
+            path: '/dashboard',
         },
         {
             id: '2',
@@ -65,6 +67,27 @@ export default function Sidebar({ session }: SidebarProps) {
             path: '/laporan'
         }
     ];
+
+    const visibleMenu = menuData.map((item) => {
+        if ('subMenu' in item && item.subMenu) {
+            const filteredSub = item.subMenu.filter((sub) => {
+                const allowed = routeAccess[sub.path];
+                return !allowed || allowed.includes(role);
+            });
+
+            if (filteredSub.length === 0) return null;
+            return { ...item, subMenu: filteredSub };
+        }
+
+        if (!item.path) return null;
+
+        const allowed = routeAccess[item.path];
+        if (!allowed || allowed.includes(role)) {
+            return item;
+        }
+
+        return null;
+    }).filter((item): item is SidebarMenuItem => item !== null);
 
     return (
         <>
@@ -124,7 +147,7 @@ export default function Sidebar({ session }: SidebarProps) {
                 </div>
 
                 <div className="mt-3 mx-1 space-y-1 flex-1 overflow-y-auto overflow-x-hidden no-scrollbar pb-3 sm:pb-3">
-                    {menuData.map((item) => {
+                    {visibleMenu.map((item) => {
                         if ('subMenu' in item && item.subMenu && item.subMenu.length > 0) {
                             return <SidebarDropdown key={item.id} item={item as MenuItemWithDropdown} isCollapsed={isCollapsed} />;
                         }

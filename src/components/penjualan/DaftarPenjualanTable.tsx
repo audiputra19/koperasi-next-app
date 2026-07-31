@@ -4,6 +4,7 @@ import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
 import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
 import { cn } from "@/src/lib/cn";
 import { useKasirStore } from "@/src/store/useKasirStore";
+import { SessionPayload } from "@/src/types/auth";
 import { DaftarPenjualan, DataKasir, DataPelanggan } from "@/src/types/penjualan";
 import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
@@ -14,12 +15,16 @@ type TablePenjualan = DaftarPenjualan & Record<string, unknown>;
 
 interface DaftarPenjualanTableProps {
     dataAwal: DaftarPenjualan[];
+    session: SessionPayload | null;
 }
 
-export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableProps) {
+export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjualanTableProps) {
     const router = useRouter();
     const { setInitialDataForEdit } = useKasirStore();
     const [isDeleting, setIsDeleting] = useState(false);
+    const isAdmin = session?.role === "Admin";
+    const isKasir = session?.role === "Kasir";
+    const canEdit = isAdmin || isKasir;
 
     const handleEdit = async (p: TablePenjualan) => {
         
@@ -76,39 +81,40 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
             setIsDeleting(false);
         }
     }
-    
-    const columns: TableColumn<TablePenjualan>[] = [
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="flex gap-1 items-center">
-                    <div className="tooltip" data-tip="Edit">
-                        <button 
-                            className={cn(
-                                "p-1.5 rounded cursor-pointer",
-                                "hover:bg-base-300"
-                            )}
-                            onClick={() => handleEdit(p)}
-                        >
-                            <SquarePen size={20}/>
-                        </button> 
-                    </div>
-                    <div className="tooltip" data-tip="Hapus">
-                        <button 
-                            disabled={isDeleting}
-                            className={cn(
-                                "p-1.5 rounded cursor-pointer",
-                                "hover:bg-base-300"
-                            )}
-                            onClick={() => handleDelete(p.idTransaksi)}
-                        >
-                            <Trash2 size={20}/>
-                        </button> 
-                    </div>
+
+    const actionColumn: TableColumn<TablePenjualan> = {
+        header: 'ACTION',
+        className: 'text-center',
+        renderCell: (p) => (
+            <div className="flex gap-1 items-center">
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
                 </div>
-            )
-        },
+                <div className="tooltip" data-tip="Hapus">
+                    <button 
+                        disabled={isDeleting}
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleDelete(p.idTransaksi)}
+                    >
+                        <Trash2 size={20}/>
+                    </button> 
+                </div>
+            </div>
+        )
+    };
+    
+    const dataColumns: TableColumn<TablePenjualan>[] = [
         { 
             header: 'NO. TRANSAKSI', 
             sortKey: 'noTransaksi', 
@@ -152,6 +158,10 @@ export default function DaftarPenjualanTable({ dataAwal }: DaftarPenjualanTableP
             renderCell: (p) => p.userUbah
         },
     ];
+
+    const columns: TableColumn<TablePenjualan>[] = canEdit
+        ? [actionColumn, ...dataColumns]
+        : dataColumns;
 
     return (
         <DataTable<TablePenjualan>

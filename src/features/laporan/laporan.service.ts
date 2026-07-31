@@ -1,5 +1,5 @@
 import { apiFetch } from "@/src/lib/apiClient"
-import { DataLaporan } from "@/src/types/laporan"
+import { DataLaporan, DataLaporanPembelian } from "@/src/types/laporan"
 
 export const LaporanService = {
     getLaporan: async(date1: string | null, date2: string | null, kdPelanggan: string | undefined): Promise<DataLaporan[]> => {
@@ -9,6 +9,19 @@ export const LaporanService = {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ date1, date2, kdPelanggan }),
+            cache: 'no-store'
+        })
+    },
+}
+
+export const LaporanPembelianService = {
+    getLaporan: async(date1: string | null, date2: string | null): Promise<DataLaporanPembelian[]> => {
+        return apiFetch<DataLaporanPembelian[]>('/get-laporan-pembelian', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ date1, date2 }),
             cache: 'no-store'
         })
     },

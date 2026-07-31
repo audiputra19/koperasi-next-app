@@ -4,6 +4,7 @@ import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
 import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
+import { SessionPayload } from "@/src/types/auth";
 import { DaftarPembelian, DataPembelian, DataSupplier } from "@/src/types/pembelian";
 import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
@@ -14,15 +15,18 @@ type TablePembelian = DaftarPembelian & Record<string, unknown>;
 
 interface DaftarPembelianTableProps {
     dataAwal: DaftarPembelian[];
+    session: SessionPayload | null;
 }
 
-export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableProps) {
+export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembelianTableProps) {
     const router = useRouter();
     const { setInitialDataForEdit } = usePembelianStore();
     const [isDeleting, setIsDeleting] = useState(false);
+    const isAdmin = session?.role === "Admin";
+    const isKasir = session?.role === "Kasir";
+    const canEdit = isAdmin || isKasir;
 
     const handleEdit = async (p: TablePembelian) => {
-        
         try {
             const dataPelanggan: DataSupplier = {
                 kodeSupplier: String(p.kdSupplier),
@@ -77,39 +81,40 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
             setIsDeleting(false);
         }
     }
-    
-    const columns: TableColumn<TablePembelian>[] = [
-        { 
-            header: 'ACTION', 
-            className: 'text-center',
-            renderCell: (p) => (
-                <div className="flex gap-1 items-center">
-                    <div className="tooltip" data-tip="Edit">
-                        <button 
-                            className={cn(
-                                "p-1.5 rounded cursor-pointer",
-                                "hover:bg-base-300"
-                            )}
-                            onClick={() => handleEdit(p)}
-                        >
-                            <SquarePen size={20}/>
-                        </button> 
-                    </div>
-                    <div className="tooltip" data-tip="Hapus">
-                        <button 
-                            disabled={isDeleting}
-                            className={cn(
-                                "p-1.5 rounded cursor-pointer",
-                                "hover:bg-base-300"
-                            )}
-                            onClick={() => handleDelete(p.idTransaksi)}
-                        >
-                            <Trash2 size={20}/>
-                        </button> 
-                    </div>
+
+    const actionColumn: TableColumn<TablePembelian> = {
+        header: 'ACTION',
+        className: 'text-center',
+        renderCell: (p) => (
+            <div className="flex gap-1 items-center">
+                <div className="tooltip" data-tip="Edit">
+                    <button 
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button> 
                 </div>
-            )
-        },
+                <div className="tooltip" data-tip="Hapus">
+                    <button 
+                        disabled={isDeleting}
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleDelete(p.idTransaksi)}
+                    >
+                        <Trash2 size={20}/>
+                    </button> 
+                </div>
+            </div>
+        )
+    };
+    
+    const dataColumns: TableColumn<TablePembelian>[] = [
         { 
             header: 'NO. TRANSAKSI', 
             sortKey: 'noTransaksi', 
@@ -153,6 +158,10 @@ export default function DaftarPembelianTable({ dataAwal }: DaftarPembelianTableP
             renderCell: (p) => p.userUbah
         },
     ];
+
+    const columns: TableColumn<TablePembelian>[] = canEdit
+        ? [actionColumn, ...dataColumns]
+        : dataColumns;
 
     return (
         <DataTable<TablePembelian>

@@ -4,9 +4,16 @@ import clsx from "clsx";
 import { FileText, LayoutDashboard, Package, ShoppingCart } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Role, SessionPayload } from "@/src/types/auth";
+import { routeAccess } from "@/src/lib/roleAccess";
 
-export default function TabBarMobile() {
+interface TabBarMobileProps {
+    session: SessionPayload | null;
+}
+
+export default function TabBarMobile({ session }: TabBarMobileProps) {
     const pathname =  usePathname();
+    const role = (session?.role as Role) ?? "Anggota";
     const menuData = [
         {
             id: '1',
@@ -34,10 +41,18 @@ export default function TabBarMobile() {
         }
     ];
 
+    const visibleMenu = menuData.filter((item) => {
+        const allowed = routeAccess[item.path];
+        return !allowed || allowed.includes(role);
+    });
+
     return (
         <div className="fixed bottom-0 bg-base-100 w-full p-3 z-40">
-            <div className="grid grid-cols-4">
-                {menuData.map((item) => {
+            <div
+                className="grid place-items-center"
+                style={{ gridTemplateColumns: `repeat(${visibleMenu.length}, minmax(0, 1fr))` }}
+            >
+                {visibleMenu.map((item) => {
                     const isActive = pathname === item.path;
 
                     return (

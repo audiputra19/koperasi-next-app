@@ -13,6 +13,7 @@ import { Button } from "../ui/Button";
 import { Autocomplete } from "../ui/AutoComplete";
 import Modal from "../ui/Modal";
 import FormItem from "@/src/app/(dashboard)/(menuUtama)/daftarItem/FormItem";
+import { useToast } from "@/src/context/ToastContext";
 
 interface StepInputItemProps {
     dataItem: DaftarItem[];
@@ -37,7 +38,7 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
     } = usePembelianStore();   
 
     const [isPending, startTransition] = useTransition();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { showToast } = useToast();
     
     const searchParams = useSearchParams();
     const idTransaksiEdit = searchParams.get("id"); 
@@ -70,11 +71,9 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
 
     // const totalHarga = listBarang.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
     const totalHarga = usePembelianStore((state) => state.total);
-
-    const showAlert = (msg: string) => alert(msg);
     const handleBeli = async () => {
         if (!listSupplier || !listSupplier.kodeSupplier || !listSupplier.namaSupplier) {
-            showAlert("Supplier belum dipilih");
+            showToast("Supplier belum dipilih", "error");
             return;
         }
 
@@ -103,8 +102,6 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
             dataSupplier,
         };
 
-        setErrorMessage(null);
-
         startTransition(async () => {
             let result;
 
@@ -120,9 +117,9 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
             }
 
             if (result.error) {
-                setErrorMessage(result.error);
+                showToast(result.error, "error");
             } else if (result.success) {
-                showAlert(result.success);
+                showToast(typeof result.success === "string" ? result.success : "Transaksi berhasil disimpan.", "success");
                 resetPembelian();
                 router.push("/daftarPembelian");
             }
@@ -136,38 +133,32 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
                     <h3 className="text-lg font-bold">Input Item Belanja</h3>
                 </div>
 
-                {errorMessage && (
-                    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
-                        ⚠️ {errorMessage}
-                    </div>
-                )}
-
-                    {/* Bagian Autocomplete pencarian barang */}
-                    <div className="w-full">
-                        <label className="text-sm font-medium text-gray-500 block mb-1">Cari Item</label>
-                        <div className="flex justify-between gap-5">
-                            <div className="w-full max-w-md">
-                                <Autocomplete
-                                    options={dataItem}
-                                    placeholder="Ketik nama atau barcode item..."
-                                    selectedValue=""
-                                    valueKey="barcode"
-                                    labelKey="nama"
-                                    onSelect={handleSelectBarang}
-                                />
-                            </div>    
-                            <div>
-                                <Button 
-                                    className="flex gap-2"
-                                    variant="primary"
-                                    size="sm"
-                                    onClick={handleOpenModal}
-                                >
-                                    <Plus size={18} />
-                                    Tambah Item    
-                                </Button>
-                            </div>
+                {/* Bagian Autocomplete pencarian barang */}
+                <div className="w-full">
+                    <label className="text-sm font-medium text-gray-500 block mb-1">Cari Item</label>
+                    <div className="flex justify-between gap-5">
+                        <div className="w-full max-w-md">
+                            <Autocomplete
+                                options={dataItem}
+                                placeholder="Ketik nama atau barcode item..."
+                                selectedValue=""
+                                valueKey="barcode"
+                                labelKey="nama"
+                                onSelect={handleSelectBarang}
+                            />
+                        </div>    
+                        <div>
+                            <Button 
+                                className="flex gap-2"
+                                variant="primary"
+                                size="sm"
+                                onClick={handleOpenModal}
+                            >
+                                <Plus size={18} />
+                                Tambah Item    
+                            </Button>
                         </div>
+                    </div>
                 </div>
 
                 <div className="border border-base-300 rounded-lg overflow-x-auto w-full">

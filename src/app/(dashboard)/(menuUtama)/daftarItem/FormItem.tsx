@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/src/components/ui/Button';
+import { useToast } from '@/src/context/ToastContext';
 import { addItem, editItem } from '@/src/features/menu/item/action';
 import { DaftarItem, MenuState } from '@/src/types/menu';
 import { useActionState, useEffect, useState } from 'react';
@@ -33,12 +34,17 @@ export default function FormItem({ onClose, initialData }: FormItemProps) {
         return ''; // kosong kalau belum ada data
     };
     const [persenUntung, setPersenUntung] = useState<number | ''>(hitungPersenAwal());
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (state?.success) {
+            showToast(typeof state.success === "string" ? state.success : "Berhasil disimpan.", "success");
             onClose();
         }
-    }, [state, onClose]);
+        if (state?.error) {
+            showToast(state.error, "error");
+        }
+    }, [state]);
 
     const handleHargaBeliChange = (raw: string) => {
         if (raw === '') {

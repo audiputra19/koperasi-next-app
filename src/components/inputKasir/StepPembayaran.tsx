@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { KasirPayload, EditKasirPayload } from "@/src/types/penjualan";
 import { Button } from "../ui/Button";
+import { useToast } from "@/src/context/ToastContext";
 
 interface StepPembayaranProps {
     initialUser: { nama: string } | null;
@@ -25,14 +26,12 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
     } = useKasirStore();
 
     const [isPending, startTransition] = useTransition();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { showToast } = useToast();
     
     const searchParams = useSearchParams();
     const idTransaksiEdit = searchParams.get("id"); 
     const isEditMode = !!idTransaksiEdit;
     const router = useRouter();
-
-    const showAlert = (msg: string) => alert(msg);
 
     useEffect(() => {
         if (!metode) {
@@ -42,12 +41,12 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
 
     const handleBayar = async () => {
         if (!listPelanggan || !listPelanggan.kodePelanggan || !listPelanggan.namaPelanggan) {
-            showAlert("Pelanggan belum dipilih");
+            showToast("Pelanggan belum dipilih", "error");
             return;
         }
 
         if (!metode) {
-            showAlert("Metode belum dipilih");
+            showToast("Metode belum dipilih", "error");
             return;
         }
 
@@ -74,8 +73,6 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
             dataPelanggan,
         };
 
-        setErrorMessage(null);
-
         startTransition(async () => {
             let result;
 
@@ -91,9 +88,9 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
             }
 
             if (result.error) {
-                setErrorMessage(result.error);
+                showToast(result.error, "error");
             } else if (result.success) {
-                showAlert(result.success);
+                showToast(typeof result.success === "string" ? result.success : "Transaksi berhasil disimpan.", "success");
                 resetKasir();
                 router.push("/inputKasir");
             }
@@ -107,12 +104,6 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                     {isEditMode ? "Konfirmasi Perubahan" : "Metode Pembayaran Kasir"}
                 </h3>
             </div>
-
-            {errorMessage && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
-                    ⚠️ {errorMessage}
-                </div>
-            )}
 
             <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-500">Pilih Metode Pembayaran</label>

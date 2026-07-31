@@ -5,18 +5,37 @@ import { login } from "@/src/features/auth/action";
 import { AuthState } from "@/src/types/auth";
 import { Eye, EyeOff, LockKeyhole, ShieldUser } from "lucide-react";
 import Image from "next/image";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "../ui/Button";
+import { useToast } from '@/src/context/ToastContext';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
     const initialState: AuthState = {};
     const [state, formAction, isPending] = useActionState(login, initialState);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [userId, setUserId] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const { showToast } = useToast();
+    const router = useRouter();
 
     const handleShowPassword = (e: React.MouseEvent) => {
         e.preventDefault();
         setShowPassword((prev) => !prev);
     }
+
+    useEffect(() => {
+        if (state?.success) {
+            showToast(typeof state.success === "string" ? state.success : "Login Berhasil.", "success");
+            if (state.redirectTo) {
+                router.push(state.redirectTo);
+            }
+        }
+        if (state?.error) {
+            showToast(state.error, "error");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state]);
 
     return (
         <div className="relative p-10 sm:p-20 bg-base-100 rounded-l-xl flex flex-col sm:justify-center">
@@ -54,6 +73,8 @@ export default function LoginForm() {
                             name="userId"
                             className="grow" 
                             placeholder="ID User" 
+                            value={userId}
+                            onChange={(e) => setUserId(e.target.value)}
                         />
                     </label>
                     <label className="input w-full">
@@ -63,6 +84,8 @@ export default function LoginForm() {
                             name="password"
                             className="grow" 
                             placeholder="Password" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <button 
                             type="button"

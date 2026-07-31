@@ -2,6 +2,9 @@
 
 import { useSidebarMobile } from "@/src/context/SidebarContext";
 import { logout } from "@/src/features/auth/action";
+import { useKasirStore } from "@/src/store/useKasirStore";
+import { useLaporanStore } from "@/src/store/useLaporanStore";
+import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { AuthState, SessionPayload } from "@/src/types/auth";
 import { ChevronDown, LogOut, Menu, Settings2 } from "lucide-react";
 import Link from "next/link";
@@ -26,7 +29,18 @@ export default function Navbar({ session }: NavbarProps) {
               .trim()
         : "Home";
     const initialState: AuthState = {};
-    const [state, formAction, isPending] = useActionState(logout, initialState);   
+    const [state, formAction, isPending] = useActionState(logout, initialState);
+    
+    const resetKasir = useKasirStore((s) => s.resetKasir);
+    const resetLaporan = useLaporanStore((s) => s.resetLaporan);
+    const resetPembelian = usePembelianStore((s) => s.resetPembelian);
+
+    const handleLogoutSubmit = () => {
+        // reset semua store client-side, jalan SEBELUM/BERSAMAAN request logout ke server
+        resetKasir();
+        resetLaporan();
+        resetPembelian();
+    };
 
     return (
         <div className="sticky top-0 px-5 py-3 bg-base-100 border-b border-base-300 z-40">
@@ -64,7 +78,7 @@ export default function Navbar({ session }: NavbarProps) {
                                         <Settings2 size={20} />Settings
                                     </Link>
                                 </li>
-                                <form action={formAction}>
+                                <form action={formAction} onSubmit={handleLogoutSubmit}>
                                     <li className="border-t border-base-300 pt-2">
                                             <button
                                                 type="submit"

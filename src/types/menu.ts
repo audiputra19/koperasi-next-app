@@ -5,7 +5,7 @@ export interface DaftarPelanggan {
     limitBelanja: number;
     kredit: number;
     role: string;
-    password: string;
+    hasPassword: string;
     sumber: string;
 }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getDefaultRoute, routeAccess } from "./lib/roleAccess";
 import { decrypt } from "./lib/session";
 
 // const protectedRoutes = [
@@ -21,8 +22,21 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/login", req.nextUrl));
     }
 
-    if(isAuthRoute && session?.userId) {
-        return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    if (isAuthRoute && session?.userId) {
+        const target = getDefaultRoute(session.role);
+        if (target !== path) {
+            return NextResponse.redirect(new URL(target, req.nextUrl));
+        }
+    }
+
+    if (isProtectedRoute && session?.userId) {
+        const matchedRoute = Object.keys(routeAccess).find(
+            (route) => path === route || path.startsWith(route + "/")
+        );
+
+        if (matchedRoute && !routeAccess[matchedRoute].includes(session.role)) {
+            return NextResponse.redirect(new URL(getDefaultRoute(session.role), req.nextUrl));
+        }
     }
 
     return NextResponse.next();

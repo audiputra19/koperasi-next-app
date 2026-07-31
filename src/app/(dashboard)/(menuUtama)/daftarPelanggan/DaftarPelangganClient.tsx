@@ -5,12 +5,14 @@ import Modal from '@/src/components/ui/Modal';
 import { DaftarPelanggan } from '@/src/types/menu';
 import { useState } from 'react';
 import FormPelanggan from "./FormPelanggan";
+import { SessionPayload } from '@/src/types/auth';
 
 interface DaftarPelangganClientProps {
     dataAwal: [];
+    session: SessionPayload | null;
 }
 
-export default function DaftarPelangganClient({ dataAwal }: DaftarPelangganClientProps) {
+export default function DaftarPelangganClient({ dataAwal, session }: DaftarPelangganClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPelanggan, setSelectedPelanggan] = useState<DaftarPelanggan | null>(null);
 
@@ -40,6 +42,7 @@ export default function DaftarPelangganClient({ dataAwal }: DaftarPelangganClien
                 <FormPelanggan 
                     onClose={handleCloseModal} 
                     initialData={selectedPelanggan}
+                    session={session}
                 />
             </Modal>
         </div>

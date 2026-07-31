@@ -10,11 +10,14 @@ export interface UserData {
 export interface SessionPayload extends JWTPayload {
     userId: string;
     nama: string;
-    role: string;
+    role: "Admin" | "Kasir" | "Pengawas" | "Anggota";
     expiresAt: Date;
 }
 
 export interface AuthState {
     error?: string;
-    success?: boolean;
+    success?: boolean | string;
+    redirectTo?: string;
 }
+
+export type Role = "Admin" | "Kasir" | "Pengawas" | "Anggota";

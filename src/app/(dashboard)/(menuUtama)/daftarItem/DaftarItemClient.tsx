@@ -7,12 +7,14 @@ import { DaftarItem } from '@/src/types/menu';
 import { Plus } from "lucide-react";
 import { useState } from 'react';
 import FormItem from './FormItem';
+import { SessionPayload } from "@/src/types/auth";
 
 interface DaftarItemClientProps {
     dataAwal: [];
+    session: SessionPayload | null;
 }
 
-export default function DaftarItemClient({ dataAwal }: DaftarItemClientProps) {
+export default function DaftarItemClient({ dataAwal, session }: DaftarItemClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<DaftarItem | null>(null);
 
@@ -48,6 +50,7 @@ export default function DaftarItemClient({ dataAwal }: DaftarItemClientProps) {
             <DaftarItemTable 
                 dataAwal={dataAwal} 
                 onEdit={handleOpenEditModal}
+                session={session}
             />
 
             <Modal 

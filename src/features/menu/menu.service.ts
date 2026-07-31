@@ -2,10 +2,11 @@ import { DaftarItem, DaftarPelanggan, DaftarSupplier } from "../../types/menu";
 import { apiFetch } from "../../lib/apiClient";
 
 export const MenuService = {
-    getDaftarPelanggan: async(): Promise<DaftarPelanggan[]> => {
+    getDaftarPelanggan: async(userId?: string): Promise<DaftarPelanggan[]> => {
         return apiFetch<DaftarPelanggan[]>('/get-pelanggan', {
             method: 'POST',
-            cache: 'no-store'
+            cache: 'no-store',
+            body: JSON.stringify(userId ? { userId } : {}),
         })
     },
     getDaftarSupplier: async(): Promise<DaftarSupplier[]> => {
