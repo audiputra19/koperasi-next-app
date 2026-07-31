@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, XCircle, AlertTriangle, Info, X } from "lucide-react";
-import clsx from "clsx";
 import { cn } from "@/src/lib/cn";
+import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
