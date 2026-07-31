@@ -1,135 +1,44 @@
 "use client";
 
 import moment from "moment-timezone";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import logo from '@/public/images/koperasi-logo.jpg';
-import { useLaporanStore } from "@/src/store/useLaporanStore";
-import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
-import { LaporanPembelianService, LaporanService } from "@/src/features/laporan/laporan.service";
 import { DataLaporan, DataLaporanPembelian } from "@/src/types/laporan";
 import { DaftarPenjualanDetail } from "@/src/types/penjualan";
-import Image from "next/image";
 import { DaftarPembelianDetail } from "@/src/types/pembelian";
-import { PembelianService } from "@/src/features/pembelian/pembelian.service";
-import { Spinner } from "@/src/components/ui/Spinner";
+import Image from "next/image";
 
-export default function LaporanKasirClient() {
-    const searchParams = useSearchParams();
-    const autoPrint = searchParams.get("autoPrint");
-    
-    const { startDate: storeStartDate, endDate: storeEndDate, listPelanggan } = useLaporanStore();
-    
-    const formatDate1 = storeStartDate || moment().tz("Asia/Jakarta").startOf("month").format("YYYY-MM-DD");
-    const formatDate2 = storeEndDate || moment().tz("Asia/Jakarta").format("YYYY-MM-DD");
-    
-    const kdPelanggan = listPelanggan?.kodePelanggan || undefined;
+interface Props {
+    dataLaporan: DataLaporan[];
+    dataLaporanPembelian: DataLaporanPembelian[];
+    kasirDetails: Record<string, DaftarPenjualanDetail[]>;
+    pembelianDetails: Record<string, DaftarPembelianDetail[]>;
+    startDate: string;
+    endDate: string;
+    autoPrint?: string;
+}
 
-    const date1 = moment(formatDate1).tz("Asia/Jakarta").format("DD/MM/YYYY");
-    const date2 = moment(formatDate2).tz("Asia/Jakarta").format("DD/MM/YYYY");
-    
+export default function LaporanKasirClient({
+    dataLaporan,
+    dataLaporanPembelian,
+    kasirDetails,
+    pembelianDetails,
+    startDate,
+    endDate,
+    autoPrint,
+}: Props) {
     const router = useRouter();
 
-    const [dataLaporan, setDataLaporan] = useState<DataLaporan[] | null>(null);
-    const [dataLaporanPembelian, setDataLaporanPembelian] = useState<DataLaporanPembelian[] | null>(null);
-    const [kasirDetails, setKasirDetails] = useState<Record<string, DaftarPenjualanDetail[]>>({});
-    const [pembelianDetails, setPembelianDetails] = useState<Record<string, DaftarPembelianDetail[]>>({});
-    
-    const [kasirLoading, setKasirLoading] = useState(true);
-    const [loadingDetail, setLoadingDetail] = useState(true);
-
-    const [pembelianLoading, setPembelianLoading] = useState(true);
-    const [loadingPembelianDetail, setLoadingPembelianDetail] = useState(true);
-
-    useEffect(() => {
-        const fetchLaporan = async () => {
-            try {
-                setKasirLoading(true);
-                const res = await LaporanService.getLaporan(formatDate1, formatDate2, kdPelanggan);
-                setDataLaporan(res);
-            } catch (error) {
-                console.error("Gagal fetch laporan:", error);
-                setKasirLoading(false);
-            }
-        };
-
-        const fetchLaporanPembelian = async () => {
-            try {
-                setKasirLoading(true);
-                const res = await LaporanPembelianService.getLaporan(formatDate1, formatDate2);
-                setDataLaporanPembelian(res);
-            } catch (error) {
-                console.error("Gagal fetch laporan:", error);
-                setKasirLoading(false);
-            }
-        };
-
-        fetchLaporan();
-        fetchLaporanPembelian();
-    }, [formatDate1, formatDate2, kdPelanggan]);
-
-    // Penjualan
-    useEffect(() => {
-        const fetchDetails = async () => {
-            if (!dataLaporan || dataLaporan.length === 0) {
-                setLoadingDetail(false);
-                setKasirLoading(false);
-                return;
-            }
-
-            setLoadingDetail(true);
-            const details: Record<string, DaftarPenjualanDetail[]> = {};
-            
-            for (const item of dataLaporan) {
-                try {
-                    const result = await PenjualanService.getDaftarPenjualanDetail(item.idTransaksi);
-                    details[item.idTransaksi] = result;
-                } catch (error) {
-                    console.error(`Gagal fetch detail untuk ${item.idTransaksi}`, error);
-                }
-            }
-            setKasirDetails(details);
-            setLoadingDetail(false);
-            setKasirLoading(false);
-        };
-
-        fetchDetails();
-    }, [dataLaporan]);
-
-    // Pembelian
-    useEffect(() => {
-        const fetchPembelianDetails = async () => {
-            if (!dataLaporanPembelian || dataLaporanPembelian.length === 0) {
-                setLoadingPembelianDetail(false);
-                setPembelianLoading(false);
-                return;
-            }
-
-            setLoadingPembelianDetail(true);
-            const details: Record<string, DaftarPembelianDetail[]> = {};
-            
-            for (const item of dataLaporanPembelian) {
-                try {
-                    const result = await PembelianService.getDaftarPembelianDetail(item.idTransaksi);
-                    details[item.idTransaksi] = result;
-                } catch (error) {
-                    console.error(`Gagal fetch detail untuk ${item.idTransaksi}`, error);
-                }
-            }
-            setPembelianDetails(details);
-            setLoadingPembelianDetail(false);
-            setPembelianLoading(false);
-        };
-
-        fetchPembelianDetails();
-    }, [dataLaporanPembelian]);
+    const date1 = moment(startDate).tz("Asia/Jakarta").format("DD/MM/YYYY");
+    const date2 = moment(endDate).tz("Asia/Jakarta").format("DD/MM/YYYY");
 
     useEffect(() => {
         const fileName = `laporan_penjualan_kasir_${moment(date1, "DD/MM/YYYY").tz("Asia/Jakarta").format("YYYYMMDD")}_${moment(date2, "DD/MM/YYYY").tz("Asia/Jakarta").format("YYYYMMDD")}`;
         const prevTitle = document.title;
         document.title = fileName;
-        
-        if (autoPrint === "true" && !kasirLoading && !loadingDetail) {
+
+        if (autoPrint === "true") {
             const handleAfterPrint = () => {
                 document.title = prevTitle;
                 router.back();
@@ -147,17 +56,7 @@ export default function LaporanKasirClient() {
                 document.title = prevTitle;
             };
         }
-    }, [autoPrint, kasirLoading, loadingDetail, date1, date2, router]);
-
-    const isDataLoading = kasirLoading || loadingDetail;
-    
-    if (isDataLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[300px] w-full gap-3 py-10">
-                <Spinner />
-            </div>
-        );
-    }
+    }, [autoPrint, date1, date2, router]);
 
     // Penjualan
     const totalItem = dataLaporan?.reduce((total, item) => {
@@ -166,7 +65,7 @@ export default function LaporanKasirClient() {
     }, 0) || 0;
 
     const totalAkhir = dataLaporan?.reduce((total, item) => {
-        return total + item.total; 
+        return total + item.total;
     }, 0) || 0;
 
     const totalMetode = dataLaporan?.reduce((acc, item) => {
@@ -174,7 +73,7 @@ export default function LaporanKasirClient() {
         if (item.metode === 2) acc.kredit += item.total;
         if (item.metode === 3) acc.qris += item.total;
         return acc;
-    }, {tunai: 0, kredit: 0, qris: 0}) || {tunai: 0, kredit: 0, qris: 0};
+    }, { tunai: 0, kredit: 0, qris: 0 }) || { tunai: 0, kredit: 0, qris: 0 };
 
     // Pembelian
     const totalItemPembelian = dataLaporanPembelian?.reduce((total, item) => {
@@ -183,7 +82,7 @@ export default function LaporanKasirClient() {
     }, 0) || 0;
 
     const totalAkhirPembelian = dataLaporanPembelian?.reduce((total, item) => {
-        return total + item.total; 
+        return total + item.total;
     }, 0) || 0;
 
     return (
@@ -191,7 +90,7 @@ export default function LaporanKasirClient() {
             <div className="border border-dashed bg-white text-black min-w-max md:min-w-0 print:min-w-full print:border-none">
                 <div className="flex justify-between p-5 gap-4">
                     <div className="flex gap-3">
-                        <Image 
+                        <Image
                             src={logo}
                             alt="Login Image"
                             width={110}
@@ -244,18 +143,18 @@ export default function LaporanKasirClient() {
                                 let tunai = 0;
                                 let kredit = 0;
                                 let qris = 0;
-                                if(item.metode === 1) {
+                                if (item.metode === 1) {
                                     tunai = item.total;
-                                } else if(item.metode === 2) {
+                                } else if (item.metode === 2) {
                                     kredit = item.total;
-                                } else if(item.metode === 3) {
+                                } else if (item.metode === 3) {
                                     qris = item.total;
                                 }
 
                                 const tanggal = moment(item.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
 
                                 return (
-                                    <tr 
+                                    <tr
                                         className="text-xs text-black print:break-inside-avoid"
                                         key={item.idTransaksi}
                                     >
@@ -314,7 +213,7 @@ export default function LaporanKasirClient() {
                                 const tanggal = moment(item.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
 
                                 return (
-                                    <tr 
+                                    <tr
                                         className="text-xs text-black print:break-inside-avoid"
                                         key={item.idTransaksi}
                                     >

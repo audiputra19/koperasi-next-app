@@ -1,87 +1,39 @@
 "use client";
 
 import moment from "moment-timezone";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import logo from '@/public/images/koperasi-logo.jpg';
-import { useLaporanStore } from "@/src/store/useLaporanStore";
-import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
-import { LaporanService } from "@/src/features/laporan/laporan.service";
 import { DataLaporan } from "@/src/types/laporan";
 import { DaftarPenjualanDetail } from "@/src/types/penjualan";
 import Image from "next/image";
-import { Spinner } from "@/src/components/ui/Spinner";
 
-export default function LaporanPenjualanDetailClient() {
-    const searchParams = useSearchParams();
-    const autoPrint = searchParams.get("autoPrint");
-    
-    const { startDate: storeStartDate, endDate: storeEndDate, listPelanggan } = useLaporanStore();
-    
-    const formatDate1 = storeStartDate || moment().tz("Asia/Jakarta").startOf("month").format("YYYY-MM-DD");
-    const formatDate2 = storeEndDate || moment().tz("Asia/Jakarta").format("YYYY-MM-DD");
-    
-    const kdPelanggan = listPelanggan?.kodePelanggan || undefined;
+interface Props {
+    dataLaporan: DataLaporan[];
+    kasirDetails: Record<string, DaftarPenjualanDetail[]>;
+    startDate: string;
+    endDate: string;
+    autoPrint?: string;
+}
 
-    const date1 = moment(formatDate1).tz("Asia/Jakarta").format("DD/MM/YYYY");
-    const date2 = moment(formatDate2).tz("Asia/Jakarta").format("DD/MM/YYYY");
-    
+export default function LaporanPenjualanDetailClient({
+    dataLaporan,
+    kasirDetails,
+    startDate,
+    endDate,
+    autoPrint,
+}: Props) {
     const router = useRouter();
 
-    const [dataLaporan, setDataLaporan] = useState<DataLaporan[] | null>(null);
-    const [kasirDetails, setKasirDetails] = useState<Record<string, DaftarPenjualanDetail[]>>({});
-    
-    const [kasirLoading, setKasirLoading] = useState(true);
-    const [loadingDetail, setLoadingDetail] = useState(true);
-
-    useEffect(() => {
-        const fetchLaporan = async () => {
-            try {
-                setKasirLoading(true);
-                const res = await LaporanService.getLaporan(formatDate1, formatDate2, kdPelanggan);
-                setDataLaporan(res);
-            } catch (error) {
-                console.error("Gagal fetch laporan:", error);
-                setKasirLoading(false);
-            }
-        };
-
-        fetchLaporan();
-    }, [formatDate1, formatDate2, kdPelanggan]);
-
-    useEffect(() => {
-        const fetchDetails = async () => {
-            if (!dataLaporan || dataLaporan.length === 0) {
-                setLoadingDetail(false);
-                setKasirLoading(false);
-                return;
-            }
-
-            setLoadingDetail(true);
-            const details: Record<string, DaftarPenjualanDetail[]> = {};
-            
-            for (const item of dataLaporan) {
-                try {
-                    const result = await PenjualanService.getDaftarPenjualanDetail(item.idTransaksi);
-                    details[item.idTransaksi] = result;
-                } catch (error) {
-                    console.error(`Gagal fetch detail untuk ${item.idTransaksi}`, error);
-                }
-            }
-            setKasirDetails(details);
-            setLoadingDetail(false);
-            setKasirLoading(false);
-        };
-
-        fetchDetails();
-    }, [dataLaporan]);
+    const date1 = moment(startDate).tz("Asia/Jakarta").format("DD/MM/YYYY");
+    const date2 = moment(endDate).tz("Asia/Jakarta").format("DD/MM/YYYY");
 
     useEffect(() => {
         const fileName = `laporan_penjualan_rekap_${moment(date1, "DD/MM/YYYY").tz("Asia/Jakarta").format("YYYYMMDD")}_${moment(date2, "DD/MM/YYYY").tz("Asia/Jakarta").format("YYYYMMDD")}`;
         const prevTitle = document.title;
         document.title = fileName;
-        
-        if (autoPrint === "true" && !kasirLoading && !loadingDetail) {
+
+        if (autoPrint === "true") {
             const handleAfterPrint = () => {
                 document.title = prevTitle;
                 router.back();
@@ -99,17 +51,7 @@ export default function LaporanPenjualanDetailClient() {
                 document.title = prevTitle;
             };
         }
-    }, [autoPrint, kasirLoading, loadingDetail, date1, date2, router]);
-
-    const isDataLoading = kasirLoading || loadingDetail;
-    
-    if (isDataLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[300px] w-full gap-3 py-10">
-                <Spinner />
-            </div>
-        );
-    }
+    }, [autoPrint, date1, date2, router]);
 
     return (
         <div className="text-black bg-white w-full">
@@ -131,7 +73,7 @@ export default function LaporanPenjualanDetailClient() {
             <div className="border border-dashed border-gray-800 bg-white text-black min-w-max md:min-w-0">
                 <div className="flex justify-between p-5 gap-4">
                     <div className="flex gap-3">
-                        <Image 
+                        <Image
                             src={logo}
                             alt="Login Image"
                             width={110}

@@ -57,8 +57,18 @@ export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLa
             alert("Silakan pilih periode tanggal terlebih dahulu!");
             return;
         }
-        const url = autoPrint ? `${path}?autoPrint=true` : path;
-        router.push(url);
+
+        const query = new URLSearchParams();
+        query.set("startDate", startDate);
+        query.set("endDate", endDate);
+        if (listPelanggan?.kodePelanggan) {
+            query.set("kdPelanggan", listPelanggan.kodePelanggan);
+        }
+        if (autoPrint) {
+            query.set("autoPrint", "true");
+        }
+
+        router.push(`${path}?${query.toString()}`);
     };
 
     // const handleExportRugiLabaExcel = async () => {
@@ -237,7 +247,7 @@ export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLa
                         <div>
                             <button
                                 type="button"
-                                onClick={() => handleNavigasi("/laporanPenjualanRekap", true)}
+                                onClick={() => handleNavigasi("/laporanKasir", true)}
                                 className="btn btn-primary bg-primary hover:bg-primary/70 text-white rounded-none border-none h-11 min-h-0 px-3"
                                 title="Cetak Laporan Kasir"
                             >
