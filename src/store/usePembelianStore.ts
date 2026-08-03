@@ -27,6 +27,13 @@ interface PembelianState {
     updateHargaBarang: (kodeItem: string, hargaBaru: number) => void;
     removeBarang: (kodeItem: string) => void;
     setMetode: (metodePilihan: string) => void;
+
+    setEditContext: (
+        dataSupplier: DataSupplier,
+        metodeLama: string,
+        tanggalLama: string
+    ) => void;
+    setBarangFromEdit: (dataPembelian: DataPembelian[]) => void;
     
     setInitialDataForEdit: (
         dataSupplier: DataSupplier, 
@@ -96,6 +103,25 @@ export const usePembelianStore = create<PembelianState>()(
             }),
 
             setMetode: (metodePilihan) => set({ metode: metodePilihan }),
+
+            setEditContext: (dataSupplier, metodeLama, tanggalLama) => {
+                set({
+                    step: 1,
+                    listSupplier: dataSupplier,
+                    listBarang: [],
+                    metode: metodeLama,
+                    datePembelian: tanggalLama,
+                    total: 0,
+                });
+            },
+
+            setBarangFromEdit: (dataPembelian) => {
+                const totalLama = dataPembelian.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
+                set({
+                    listBarang: dataPembelian,
+                    total: totalLama,
+                });
+            },
 
             setInitialDataForEdit: (dataSupplier, dataPembelian, metodeLama, tanggalLama) => {
                 const totalLama = dataPembelian.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);

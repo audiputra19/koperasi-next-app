@@ -5,7 +5,7 @@ import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
 import { cn } from "@/src/lib/cn";
 import { useKasirStore } from "@/src/store/useKasirStore";
 import { SessionPayload } from "@/src/types/auth";
-import { DaftarPenjualan, DataKasir, DataPelanggan } from "@/src/types/penjualan";
+import { DaftarPenjualan, DataPelanggan } from "@/src/types/penjualan";
 import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
 import { useRouter } from "next/navigation";
@@ -20,45 +20,26 @@ interface DaftarPenjualanTableProps {
 
 export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjualanTableProps) {
     const router = useRouter();
-    const { setInitialDataForEdit } = useKasirStore();
     const [isDeleting, setIsDeleting] = useState(false);
     const isAdmin = session?.role === "Admin";
     const isKasir = session?.role === "Kasir";
     const canEdit = isAdmin || isKasir;
+    const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
 
-    const handleEdit = async (p: TablePenjualan) => {
-        
-        try {
-            const dataPelanggan: DataPelanggan = {
-                kodePelanggan: String(p.kdPelanggan),
-                namaPelanggan: String(p.namaPelanggan)
-            };
+    const handleEdit = (p: TablePenjualan) => {
+        setLoadingEditId(p.idTransaksi);
 
-            const responseDetail = await PenjualanService.getDaftarPenjualanDetail(p.idTransaksi);
-            console.log("Raw Response dari DB:", responseDetail);
+        const dataPelanggan: DataPelanggan = {
+            kodePelanggan: String(p.kdPelanggan),
+            namaPelanggan: String(p.namaPelanggan),
+        };
 
-            const dataBarang: DataKasir[] = responseDetail.map((detail) => ({
-                barcode: detail.barcode,
-                kodeItem: detail.kodeItem,
-                namaItem: detail.namaItem,
-                jenis: detail.jenis || "",
-                jumlah: Number(detail.jumlah || 0),
-                satuan: detail.satuan || "",
-                harga: Number(detail.harga || 0),
-            }));
-
-            setInitialDataForEdit(
-                dataPelanggan,
-                dataBarang,
-                String(p.metode || ""), 
-                String(p.tanggal || "")
-            );
-         
-            router.push(`/inputKasir?id=${p.idTransaksi}`);
-        } catch (error) {
-            console.error("Gagal mengambil detail transaksi:", error);
-            alert("Terjadi kesalahan saat memuat detail barang.");
-        }
+        useKasirStore.getState().setEditContext(
+            dataPelanggan,
+            String(p.metode || ""),
+            String(p.tanggal || "")
+        );
+        router.push(`/inputKasir?id=${p.idTransaksi}`);
     };
 
     const handleDelete = async (idTransaksi: string) => {
@@ -89,15 +70,17 @@ export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjua
         renderCell: (p) => (
             <div className="flex gap-1 items-center">
                 <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
+                    <button
+                        className={cn("p-1.5 rounded cursor-pointer", "hover:bg-base-300")}
                         onClick={() => handleEdit(p)}
+                        disabled={loadingEditId === p.idTransaksi}
                     >
-                        <SquarePen size={20}/>
-                    </button> 
+                        {loadingEditId === p.idTransaksi ? (
+                            <span className="loading loading-spinner loading-xs" />
+                        ) : (
+                            <SquarePen size={20} />
+                        )}
+                    </button>
                 </div>
                 <div className="tooltip" data-tip="Hapus">
                     <button 

@@ -10,6 +10,7 @@ import { CreditCard, ShoppingBag, User } from "lucide-react"; // Install lucide-
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useKasirStore } from "../../../../store/useKasirStore";
+import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
 
 interface InputKasirClientProps {
     dataPelanggan: DaftarPelanggan[];
@@ -27,8 +28,29 @@ export function InputKasirClient({ dataPelanggan, dataItem, initialUser }: Input
     useEffect(() => {
         if (!idTransaksi) {
             resetKasir();
+            return;
         }
-    }, [idTransaksi, resetKasir]);
+
+        const loadDetail = async () => {
+            try {
+                const responseDetail = await PenjualanService.getDaftarPenjualanDetail(idTransaksi);
+                const dataBarang = responseDetail.map((detail) => ({
+                    barcode: detail.barcode,
+                    kodeItem: detail.kodeItem,
+                    namaItem: detail.namaItem,
+                    jenis: detail.jenis || "",
+                    jumlah: Number(detail.jumlah || 0),
+                    satuan: detail.satuan || "",
+                    harga: Number(detail.harga || 0),
+                }));
+                useKasirStore.getState().setBarangFromEdit(dataBarang);
+            } catch (error) {
+                console.error("Gagal mengambil detail transaksi:", error);
+            }
+        };
+
+        loadDetail();
+    }, [idTransaksi]);
 
     const handleBatalEdit = () => {
         resetKasir();

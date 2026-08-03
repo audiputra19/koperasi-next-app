@@ -20,44 +20,27 @@ interface DaftarPembelianTableProps {
 
 export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembelianTableProps) {
     const router = useRouter();
-    const { setInitialDataForEdit } = usePembelianStore();
     const [isDeleting, setIsDeleting] = useState(false);
     const isAdmin = session?.role === "Admin";
     const isKasir = session?.role === "Kasir";
     const canEdit = isAdmin || isKasir;
+    const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
 
-    const handleEdit = async (p: TablePembelian) => {
-        try {
-            const dataPelanggan: DataSupplier = {
-                kodeSupplier: String(p.kdSupplier),
-                namaSupplier: String(p.namaSupplier)
-            };
+    const handleEdit = (p: TablePembelian) => {
+        setLoadingEditId(p.idTransaksi);
 
-            const responseDetail = await PembelianService.getDaftarPembelianDetail(p.idTransaksi);
+        const dataSupplier: DataSupplier = {
+            kodeSupplier: String(p.kdSupplier),
+            namaSupplier: String(p.namaSupplier),
+        };
 
-            const dataBarang: DataPembelian[] = responseDetail.map((detail) => ({
-                barcode: detail.barcode,
-                kodeItem: detail.kodeItem,
-                namaItem: detail.namaItem,
-                jenis: detail.jenis || "",
-                jumlah: Number(detail.jumlah || 0),
-                satuan: detail.satuan || "",
-                harga: Number(detail.harga || 0),
-                expireDate: moment(detail.expiredDate).format("YYYY-MM-DD")
-            }));
+        usePembelianStore.getState().setEditContext(
+            dataSupplier,
+            String(p.metode || ""),
+            String(p.tanggal || "")
+        );
 
-            setInitialDataForEdit(
-                dataPelanggan,
-                dataBarang,
-                String(p.metode || ""), 
-                String(p.tanggal || "")
-            );
-            
-            router.push(`/inputPembelian?id=${p.idTransaksi}`);
-        } catch (error) {
-            console.error("Gagal mengambil detail transaksi:", error);
-            alert("Terjadi kesalahan saat memuat detail barang.");
-        }
+        router.push(`/inputPembelian?id=${p.idTransaksi}`);
     };
 
     const handleDelete = async (idTransaksi: string) => {
@@ -88,15 +71,17 @@ export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembel
         renderCell: (p) => (
             <div className="flex gap-1 items-center">
                 <div className="tooltip" data-tip="Edit">
-                    <button 
-                        className={cn(
-                            "p-1.5 rounded cursor-pointer",
-                            "hover:bg-base-300"
-                        )}
+                    <button
+                        className={cn("p-1.5 rounded cursor-pointer", "hover:bg-base-300")}
                         onClick={() => handleEdit(p)}
+                        disabled={loadingEditId === p.idTransaksi}
                     >
-                        <SquarePen size={20}/>
-                    </button> 
+                        {loadingEditId === p.idTransaksi ? (
+                            <span className="loading loading-spinner loading-xs" />
+                        ) : (
+                            <SquarePen size={20} />
+                        )}
+                    </button>
                 </div>
                 <div className="tooltip" data-tip="Hapus">
                     <button 

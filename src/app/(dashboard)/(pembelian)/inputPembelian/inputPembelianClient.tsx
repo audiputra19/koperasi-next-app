@@ -11,9 +11,10 @@ import { CreditCard, ShoppingBag, User } from "lucide-react"; // Install lucide-
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import FormInputHarga from "./FormInputHarga";
-import { HargaItem } from "@/src/types/pembelian";
+import { DataPembelian, HargaItem } from "@/src/types/pembelian";
 import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 import { StepPembayaran } from "@/src/components/inputPembelian/StepPembayaran";
+import moment from "moment-timezone";
 
 interface InputPembelianClientProps {
     dataSupplier: DaftarSupplier[];
@@ -35,8 +36,30 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
     useEffect(() => {
         if (!idTransaksi) {
             resetPembelian();
+            return;
         }
-    }, [idTransaksi, resetPembelian]);
+
+        const loadDetail = async () => {
+            try {
+                const responseDetail = await PembelianService.getDaftarPembelianDetail(idTransaksi);
+                const dataBarang: DataPembelian[] = responseDetail.map((detail) => ({
+                    barcode: detail.barcode,
+                    kodeItem: detail.kodeItem,
+                    namaItem: detail.namaItem,
+                    jenis: detail.jenis || "",
+                    jumlah: Number(detail.jumlah || 0),
+                    satuan: detail.satuan || "",
+                    harga: Number(detail.harga || 0),
+                    expireDate: moment(detail.expiredDate).format("YYYY-MM-DD"),
+                }));
+                usePembelianStore.getState().setBarangFromEdit(dataBarang);
+            } catch (error) {
+                console.error("Gagal mengambil detail transaksi:", error);
+            }
+        };
+
+        loadDetail();
+    }, [idTransaksi]);
 
     const handleBatalEdit = () => {
         resetPembelian();

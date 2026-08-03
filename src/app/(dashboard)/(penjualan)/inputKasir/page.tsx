@@ -4,9 +4,11 @@ import { MenuService } from "@/src/features/menu/menu.service";
 import { getSession } from "@/src/lib/session";
 
 export default async function InputKasir() {
-    const daftarPelanggan = await MenuService.getDaftarPelanggan();
-    const daftarItem = await MenuService.getDaftarItems();
-    const session = await getSession();
+    const [daftarPelanggan, daftarItem, session] = await Promise.all([
+        MenuService.getDaftarPelanggan(),
+        MenuService.getDaftarItems(),
+        getSession(),
+    ]);
     const user = session ? { nama: session.nama } : null;
 
     return (

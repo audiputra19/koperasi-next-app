@@ -4,9 +4,11 @@ import { getSession } from "@/src/lib/session";
 import { InputPembelianClient } from "./inputPembelianClient";
 
 export default async function InputPembelian() {
-    const daftarSupplier = await MenuService.getDaftarSupplier();
-    const daftarItem = await MenuService.getDaftarItems();
-    const session = await getSession();
+    const [daftarSupplier, daftarItem, session] = await Promise.all([
+        MenuService.getDaftarSupplier(),
+        MenuService.getDaftarItems(),
+        getSession(),
+    ]);
     const user = session ? { nama: session.nama } : null;
 
     return (

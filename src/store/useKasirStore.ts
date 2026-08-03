@@ -25,6 +25,13 @@ interface KasirState {
     setMetode: (metodePilihan: string) => void;
     
     // Injector untuk mode EDIT
+    setEditContext: (
+        dataPelanggan: DataPelanggan,
+        metodeLama: string,
+        tanggalLama: string
+    ) => void;
+    setBarangFromEdit: (dataKasir: DataKasir[]) => void;
+
     setInitialDataForEdit: (
         dataPelanggan: DataPelanggan, 
         dataKasir: DataKasir[], 
@@ -83,6 +90,25 @@ export const useKasirStore = create<KasirState>()(
             }),
 
             setMetode: (metodePilihan) => set({ metode: metodePilihan }),
+
+            setEditContext: (dataPelanggan, metodeLama, tanggalLama) => {
+                set({
+                    step: 1,
+                    listPelanggan: dataPelanggan,
+                    listBarang: [],       // kosongkan dulu, biar tidak nampilin barang transaksi sebelumnya sekilas
+                    metode: metodeLama,
+                    dateKasir: tanggalLama,
+                    total: 0,
+                });
+            },
+
+            setBarangFromEdit: (dataKasir) => {
+                const totalLama = dataKasir.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
+                set({
+                    listBarang: dataKasir,
+                    total: totalLama,
+                });
+            },
 
             setInitialDataForEdit: (dataPelanggan, dataKasir, metodeLama, tanggalLama) => {
                 const totalLama = dataKasir.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
