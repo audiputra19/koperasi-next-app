@@ -38,6 +38,7 @@ export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjua
             console.log("Raw Response dari DB:", responseDetail);
 
             const dataBarang: DataKasir[] = responseDetail.map((detail) => ({
+                barcode: detail.barcode,
                 kodeItem: detail.kodeItem,
                 namaItem: detail.namaItem,
                 jenis: detail.jenis || "",
