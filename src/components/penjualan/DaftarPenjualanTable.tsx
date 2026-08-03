@@ -110,7 +110,7 @@ export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjua
             header: 'TANGGAL', 
             sortKey: 'tanggal', 
             className: 'text-center',
-            renderCell: (p) => moment.utc(p.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
+            renderCell: (p) => moment.tz(p.tanggal, "Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
         },
         { 
             header: 'KODE PELANGGAN', 
