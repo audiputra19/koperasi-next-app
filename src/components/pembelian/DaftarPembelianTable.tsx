@@ -110,7 +110,7 @@ export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembel
             header: 'TANGGAL', 
             sortKey: 'tanggal', 
             className: 'text-center',
-            renderCell: (p) => moment(p.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss") 
+            renderCell: (p) => moment.utc(p.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
         },
         { 
             header: 'KODE SUPPLIER', 
