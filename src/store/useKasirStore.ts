@@ -50,7 +50,7 @@ export const useKasirStore = create<KasirState>()(
             listBarang: [],
             metode: "",
             total: 0,
-            dateKasir: moment().tz("Asia/Jakarta").format("YYYY-MM-DD HH::mm:ss"),
+            dateKasir: moment().tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss"),
             user: { nama: "Kasir Admin" },
 
             nextStep: () => set((state) => ({ step: state.step + 1 })),

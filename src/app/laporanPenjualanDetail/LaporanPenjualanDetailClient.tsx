@@ -28,6 +28,18 @@ export default function LaporanPenjualanDetailClient({
     const date1 = moment(startDate).tz("Asia/Jakarta").format("DD/MM/YYYY");
     const date2 = moment(endDate).tz("Asia/Jakarta").format("DD/MM/YYYY");
 
+    const { grandTotalJml, grandTotalAll } = dataLaporan?.reduce(
+        (acc, item) => {
+            const detail = kasirDetails[item.idTransaksi] || [];
+            detail.forEach((itemDetail) => {
+                acc.grandTotalJml += itemDetail.jumlah;
+                acc.grandTotalAll += itemDetail.harga * itemDetail.jumlah;
+            });
+            return acc;
+        },
+        { grandTotalJml: 0, grandTotalAll: 0 }
+    ) ?? { grandTotalJml: 0, grandTotalAll: 0 };
+
     useEffect(() => {
         const fileName = `laporan_penjualan_rekap_${moment(date1, "DD/MM/YYYY").tz("Asia/Jakarta").format("YYYYMMDD")}_${moment(date2, "DD/MM/YYYY").tz("Asia/Jakarta").format("YYYYMMDD")}`;
         const prevTitle = document.title;
@@ -177,6 +189,16 @@ export default function LaporanPenjualanDetailClient({
                                 </tbody>
                             );
                         })}
+                        <tfoot className="border-t border-b">
+                            <tr className="text-sm text-black font-semibold">
+                                <td colSpan={4} className="text-right px-2 py-2">
+                                    Total Keseluruhan
+                                </td>
+                                <td className="text-center px-2 py-2">
+                                    Rp. {grandTotalAll.toLocaleString("id-ID")}
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>

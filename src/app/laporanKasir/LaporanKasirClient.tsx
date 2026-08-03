@@ -85,6 +85,8 @@ export default function LaporanKasirClient({
         return total + item.total;
     }, 0) || 0;
 
+    const grandTotalAll = totalMetode.tunai - totalAkhirPembelian;
+
     return (
         <div className="text-black bg-white w-full">
             <div className="border border-dashed bg-white text-black min-w-max md:min-w-0 print:min-w-full print:border-none">
@@ -235,6 +237,17 @@ export default function LaporanKasirClient({
                             </tr>
                         </tfoot>
                     </table>
+
+                    <div className="border-t border-b mt-5">
+                        <div className="flex justify-end text-sm text-black font-semibold">
+                            <div className="text-right px-2 py-2">
+                                Total Keseluruhan
+                            </div>
+                            <div className="text-center px-2 py-2">
+                                Rp. {grandTotalAll.toLocaleString("id-ID")}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
