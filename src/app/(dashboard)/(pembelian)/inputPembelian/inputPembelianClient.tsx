@@ -7,12 +7,13 @@ import Modal from "@/src/components/ui/Modal";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarItem, DaftarSupplier } from "@/src/types/menu";
-import { ShoppingBag, User } from "lucide-react"; // Install lucide-react jika belum
+import { CreditCard, ShoppingBag, User } from "lucide-react"; // Install lucide-react jika belum
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import FormInputHarga from "./FormInputHarga";
 import { HargaItem } from "@/src/types/pembelian";
 import { PembelianService } from "@/src/features/pembelian/pembelian.service";
+import { StepPembayaran } from "@/src/components/inputPembelian/StepPembayaran";
 
 interface InputPembelianClientProps {
     dataSupplier: DaftarSupplier[];
@@ -58,6 +59,7 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
     const stepsConfig = [
         { id: 1, label: "Supplier", icon: User },
         { id: 2, label: "Pilih Barang", icon: ShoppingBag },
+        { id: 3, label: "Pembayaran", icon: CreditCard },
     ];
 
     const renderStepContent = () => {
@@ -65,7 +67,9 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
             case 1:
                 return <StepInputSupplier dataSupplier={dataSupplier} />;
             case 2:    
-                return <StepInputBarang dataItem={dataItem} initialUser={initialUser} onEditHarga={handleOpenEditModal} />;
+                return <StepInputBarang dataItem={dataItem} onEditHarga={handleOpenEditModal} />;
+            case 3:
+                return <StepPembayaran initialUser={initialUser} />;    
             default:
                 return <div className="p-8 text-center text-gray-500">Langkah tidak ditemukan</div>;        
         }

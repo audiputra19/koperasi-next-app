@@ -1,49 +1,37 @@
 "use client";
 
-import { addTransaksiPembelian, editTransaksiPembelian } from "@/src/features/pembelian/action";
+import FormItem from "@/src/app/(dashboard)/(menuUtama)/daftarItem/FormItem";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { DaftarItem } from "@/src/types/menu";
-import { EditPembelianPayload, PembelianPayload } from "@/src/types/pembelian";
 import { ClipboardPen, Minus, Plus, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
-import { Button } from "../ui/Button";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Autocomplete } from "../ui/AutoComplete";
+import { Button } from "../ui/Button";
 import Modal from "../ui/Modal";
-import FormItem from "@/src/app/(dashboard)/(menuUtama)/daftarItem/FormItem";
-import { useToast } from "@/src/context/ToastContext";
 
 interface StepInputItemProps {
     dataItem: DaftarItem[];
-    initialUser: { nama: string } | null;
     onEditHarga: (item: string) => void;
 }
 
-export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInputItemProps) {
+export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
     const { 
-        addBarang,
-        listSupplier, 
         listBarang, 
-        total, 
-        metode,
-        datePembelian, 
+        addBarang,
         // user, 
         prevStep, 
-        resetPembelian ,
+        nextStep,
         removeBarang,
         updateExpireDateBarang,
         updateQtyBarang
-    } = usePembelianStore();   
-
-    const [isPending, startTransition] = useTransition();
-    const { showToast } = useToast();
+    } = usePembelianStore();
     
     const searchParams = useSearchParams();
     const idTransaksiEdit = searchParams.get("id"); 
     const isEditMode = !!idTransaksiEdit;
-    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<DaftarItem | null>(null);
 
@@ -71,60 +59,6 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
 
     // const totalHarga = listBarang.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
     const totalHarga = usePembelianStore((state) => state.total);
-    const handleBeli = async () => {
-        if (!listSupplier || !listSupplier.kodeSupplier || !listSupplier.namaSupplier) {
-            showToast("Supplier belum dipilih", "error");
-            return;
-        }
-
-        const dataPembelian = listBarang.map(item => ({
-            barcode: item.barcode,
-            kodeItem: item.kodeItem,
-            namaItem: item.namaItem,
-            jenis: item.jenis,
-            jumlah: item.jumlah,
-            satuan: item.satuan,
-            harga: item.harga,
-            expiredDate: item.expireDate
-        }));
-
-        const dataSupplier = {
-            kodeSupplier: listSupplier.kodeSupplier,
-            namaSupplier: listSupplier.namaSupplier,
-        };
-
-        const basePayload = {
-            userBuat: initialUser?.nama || "Kasir System",
-            total: total,
-            metode: Number(metode),
-            startDate: datePembelian,
-            dataPembelian,
-            dataSupplier,
-        };
-
-        startTransition(async () => {
-            let result;
-
-            if (isEditMode && idTransaksiEdit) {
-                const editPayload: EditPembelianPayload = {
-                    ...basePayload,
-                    idTransaksi: idTransaksiEdit
-                };
-                result = await editTransaksiPembelian(editPayload);
-            } else {
-                const addPayload: PembelianPayload = basePayload;
-                result = await addTransaksiPembelian(addPayload);
-            }
-
-            if (result.error) {
-                showToast(result.error, "error");
-            } else if (result.success) {
-                showToast(typeof result.success === "string" ? result.success : "Transaksi berhasil disimpan.", "success");
-                resetPembelian();
-                router.push("/daftarPembelian");
-            }
-        });
-    };
 
     return (
         <>
@@ -287,12 +221,11 @@ export function StepInputBarang({ dataItem, initialUser, onEditHarga }: StepInpu
                         </Button>
                         <Button 
                             variant="primary"
-                            onClick={handleBeli} 
-                            isLoading={isPending}
+                            onClick={nextStep} 
                             disabled={listBarang.length === 0}
                             className= "disabled:bg-gray-300"
                         >
-                            {isPending ? "Memproses Data..." : isEditMode ? "Update Perubahan" : "Proses Pembelian"}
+                            Lanjut ke Pembayaran
                         </Button>
                     </div>
                 </div>

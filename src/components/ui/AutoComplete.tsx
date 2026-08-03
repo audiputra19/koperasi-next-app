@@ -13,6 +13,7 @@ interface AutocompleteProps<T> {
     labelKey: keyof T;
     isLoading?: boolean;
     onClear?: () => void;
+    onQueryChange?: (query: string) => void;
 }
 
 // Autocomplete ini wajib kombinasi antara kode dan nama!
@@ -24,7 +25,8 @@ export function Autocomplete<T>({
     valueKey,
     labelKey,
     isLoading = false ,
-    onClear
+    onClear,
+    onQueryChange
 }: AutocompleteProps<T>) {
     const [query, setQuery] = useState(selectedValue || "");
     const [isOpen, setIsOpen] = useState(false);
@@ -90,6 +92,7 @@ export function Autocomplete<T>({
                     onChange={(e) => {
                         setQuery(e.target.value);
                         setIsOpen(true);
+                        onQueryChange?.(e.target.value); 
                     }}
                     onFocus={() => setIsOpen(true)}
                     onKeyDown={handleKeyDown}
@@ -113,6 +116,7 @@ export function Autocomplete<T>({
                             onClick={() => {
                                 setQuery("");
                                 onClear?.();
+                                onQueryChange?.("");
                             }}
                         >
                             <X size={14}/>

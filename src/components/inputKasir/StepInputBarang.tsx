@@ -16,6 +16,7 @@ export function StepInputBarang({ dataItem }: StepInputItemProps) {
 
     const handleSelectBarang = (selected: DaftarItem) => {
         addBarang({
+            barcode: selected.barcode,
             kodeItem: selected.kode,
             namaItem: selected.nama,
             jenis: selected.jenis,
@@ -68,7 +69,7 @@ export function StepInputBarang({ dataItem }: StepInputItemProps) {
                         ) : (
                             listBarang.map((item) => (
                                 <tr key={item.kodeItem} className="hover:bg-base-200">
-                                    <td className="p-3 font-mono text-xs min-w-[100px]">{item.kodeItem}</td>
+                                    <td className="p-3 font-mono text-xs min-w-[100px]">{item.barcode}</td>
                                     <td className="p-3 font-medium min-w-[200px]">{item.namaItem}</td>
                                     <td className="p-3 text-right min-w-[100px]">Rp {item.harga.toLocaleString()}</td>
                                     

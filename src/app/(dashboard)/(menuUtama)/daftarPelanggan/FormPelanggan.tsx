@@ -66,16 +66,6 @@ export default function FormPelanggan({ onClose, initialData, session }: FormPel
                         </select>
                     </div>
                     <div className="form-control w-full">
-                        <label className="label py-1"><span className="label-text font-medium text-sm">Limit Belanja</span></label>
-                        <input 
-                            type="number"
-                            name="limit_belanja" 
-                            className="input input-bordered w-full bg-base-100 input-md" 
-                            placeholder="0" 
-                            defaultValue={initialData?.limitBelanja ?? 0}
-                        />
-                    </div>
-                    <div className="form-control w-full">
                         <label className="label py-1"><span className="label-text font-medium text-sm">Bisa Kredit?</span></label>
                         <select 
                             className="select select-bordered w-full bg-base-100"
@@ -101,6 +91,16 @@ export default function FormPelanggan({ onClose, initialData, session }: FormPel
                     </div>
                 </>
             )}
+            <div className="form-control w-full">
+                <label className="label py-1"><span className="label-text font-medium text-sm">Limit Belanja</span></label>
+                <input 
+                    type="number"
+                    name="limit_belanja" 
+                    className="input input-bordered w-full bg-base-100 input-md" 
+                    placeholder="0" 
+                    defaultValue={initialData?.limitBelanja ?? 0}
+                />
+            </div>
             <div className="form-control w-full">
                 <label className="label py-1">
                     <span className="label-text font-medium text-sm">

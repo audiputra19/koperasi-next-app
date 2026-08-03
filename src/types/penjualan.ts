@@ -1,4 +1,5 @@
 export interface DataKasir {
+    barcode: string;
     kodeItem: string;
     namaItem: string;
     jenis: string;

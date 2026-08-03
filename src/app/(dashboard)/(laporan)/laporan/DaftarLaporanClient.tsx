@@ -31,6 +31,7 @@ export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLa
 
     const isAnggota = session?.role === "Anggota";
     const isKasir = session?.role === "Kasir";
+    const isPengawas = session?.role === "Pengawas";
 
     useEffect(() => {
         if (!startDate) {
@@ -236,25 +237,27 @@ export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLa
                         </div>
                     )}
 
-                    <div className="flex justify-between rounded-lg overflow-hidden border border-base-300">
-                        <button
-                            type="button"
-                            onClick={() => handleNavigasi("/laporanKasir", false)}
-                            className="flex-1 justify-start btn btn-ghost bg-base-100 hover:bg-primary/10 text-primary rounded-none border-none h-11 min-h-0 normal-case px-4 font-medium"
-                        >
-                            Laporan Kasir 
-                        </button>
-                        <div>
+                    {!isAnggota && (
+                        <div className="flex justify-between rounded-lg overflow-hidden border border-base-300">
                             <button
                                 type="button"
-                                onClick={() => handleNavigasi("/laporanKasir", true)}
-                                className="btn btn-primary bg-primary hover:bg-primary/70 text-white rounded-none border-none h-11 min-h-0 px-3"
-                                title="Cetak Laporan Kasir"
+                                onClick={() => handleNavigasi("/laporanKasir", false)}
+                                className="flex-1 justify-start btn btn-ghost bg-base-100 hover:bg-primary/10 text-primary rounded-none border-none h-11 min-h-0 normal-case px-4 font-medium"
                             >
-                                <Printer size={16} />
+                                Laporan Kasir 
                             </button>
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleNavigasi("/laporanKasir", true)}
+                                    className="btn btn-primary bg-primary hover:bg-primary/70 text-white rounded-none border-none h-11 min-h-0 px-3"
+                                    title="Cetak Laporan Kasir"
+                                >
+                                    <Printer size={16} />
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

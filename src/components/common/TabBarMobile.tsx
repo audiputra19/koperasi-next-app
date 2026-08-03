@@ -1,11 +1,11 @@
 'use client';
 
-import clsx from "clsx";
-import { FileText, LayoutDashboard, Package, ShoppingCart } from "lucide-react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { Role, SessionPayload } from "@/src/types/auth";
 import { routeAccess } from "@/src/lib/roleAccess";
+import { Role, SessionPayload } from "@/src/types/auth";
+import clsx from "clsx";
+import { FileText, LayoutDashboard, Package, PackageOpen } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface TabBarMobileProps {
     session: SessionPayload | null;
@@ -24,13 +24,13 @@ export default function TabBarMobile({ session }: TabBarMobileProps) {
         {
             id: '2',
             name: 'Pembelian',
-            icon: <ShoppingCart size={22} />,
+            icon: <Package size={22} />,
             path: '/daftarPembelian'
         },
         {
             id: '3',
             name: 'Penjualan',
-            icon: <Package size={22} />,
+            icon: <PackageOpen size={22} />,
             path: '/daftarPenjualan'
         },
         {

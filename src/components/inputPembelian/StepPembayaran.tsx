@@ -7,6 +7,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { KasirPayload, EditKasirPayload } from "@/src/types/penjualan";
 import { Button } from "../ui/Button";
 import { useToast } from "@/src/context/ToastContext";
+import { usePembelianStore } from "@/src/store/usePembelianStore";
+import { addTransaksiPembelian, editTransaksiPembelian } from "@/src/features/pembelian/action";
+import { EditPembelianPayload, PembelianPayload } from "@/src/types/pembelian";
 
 interface StepPembayaranProps {
     initialUser: { nama: string } | null;
@@ -14,16 +17,16 @@ interface StepPembayaranProps {
 
 export function StepPembayaran({ initialUser }: StepPembayaranProps) {
     const { 
-        listPelanggan, 
+        listSupplier, 
         listBarang, 
-        metode, 
-        setMetode, 
+        metode,
+        setMetode,
         total, 
-        dateKasir, 
+        datePembelian, 
         // user, 
         prevStep, 
-        resetKasir 
-    } = useKasirStore();
+        resetPembelian
+    } = usePembelianStore(); 
 
     const [isPending, startTransition] = useTransition();
     const { showToast } = useToast();
@@ -39,18 +42,13 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
         }
     }, [metode, setMetode]);
 
-    const handleBayar = async () => {
-        if (!listPelanggan || !listPelanggan.kodePelanggan || !listPelanggan.namaPelanggan) {
-            showToast("Pelanggan belum dipilih", "error");
+    const handleBeli = async () => {
+        if (!listSupplier || !listSupplier.kodeSupplier || !listSupplier.namaSupplier) {
+            showToast("Supplier belum dipilih", "error");
             return;
         }
 
-        if (!metode) {
-            showToast("Metode belum dipilih", "error");
-            return;
-        }
-
-        const dataKasir = listBarang.map(item => ({
+        const dataPembelian = listBarang.map(item => ({
             barcode: item.barcode,
             kodeItem: item.kodeItem,
             namaItem: item.namaItem,
@@ -58,42 +56,43 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
             jumlah: item.jumlah,
             satuan: item.satuan,
             harga: item.harga,
+            expiredDate: item.expireDate
         }));
 
-        const dataPelanggan = {
-            kodePelanggan: listPelanggan.kodePelanggan,
-            namaPelanggan: listPelanggan.namaPelanggan,
+        const dataSupplier = {
+            kodeSupplier: listSupplier.kodeSupplier,
+            namaSupplier: listSupplier.namaSupplier,
         };
 
         const basePayload = {
             userBuat: initialUser?.nama || "Kasir System",
             total: total,
             metode: Number(metode),
-            startDate: dateKasir,
-            dataKasir,
-            dataPelanggan,
+            startDate: datePembelian,
+            dataPembelian,
+            dataSupplier,
         };
 
         startTransition(async () => {
             let result;
 
             if (isEditMode && idTransaksiEdit) {
-                const editPayload: EditKasirPayload = {
+                const editPayload: EditPembelianPayload = {
                     ...basePayload,
                     idTransaksi: idTransaksiEdit
                 };
-                result = await editTransaksiKasir(editPayload);
+                result = await editTransaksiPembelian(editPayload);
             } else {
-                const addPayload: KasirPayload = basePayload;
-                result = await addTransaksiKasir(addPayload);
+                const addPayload: PembelianPayload = basePayload;
+                result = await addTransaksiPembelian(addPayload);
             }
 
             if (result.error) {
                 showToast(result.error, "error");
             } else if (result.success) {
                 showToast(typeof result.success === "string" ? result.success : "Transaksi berhasil disimpan.", "success");
-                resetKasir();
-                router.push("/inputKasir");
+                resetPembelian();
+                router.push("/daftarPembelian");
             }
         });
     };
@@ -115,8 +114,7 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                     disabled={isPending}
                 >
                     <option value="1">Tunai (Cash)</option>
-                    <option value="2">Kredit</option>
-                    <option value="3">QRIS / E-Wallet</option>
+                    <option value="2">Transfer</option>
                 </select>
             </div>
 
@@ -124,7 +122,7 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                 <p className="font-bold border-b border-base-300 pb-3 mb-3 text-xs uppercase tracking-wider">
                     Detail Transaksi
                 </p>
-                <div className="flex justify-between"><span className="text-gray-500">Pelanggan:</span> <span className="font-medium ml-5">{listPelanggan?.namaPelanggan}</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">Pelanggan:</span> <span className="font-medium ml-5">{listSupplier?.namaSupplier}</span></div>
                 <div className="flex justify-between"><span className="text-gray-500">Petugas Kasir:</span> <span className="font-medium ml-5">{initialUser?.nama || "-"}</span></div>
                 <div className="flex justify-between border-t border-base-300 pt-3 mt-3 font-bold">
                     <span className="">Total Tagihan:</span>
@@ -142,7 +140,7 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                 </Button>
                 <Button 
                     variant="primary"
-                    onClick={handleBayar}
+                    onClick={handleBeli}
                     isLoading={isPending}
                     disabled={isPending || listBarang.length === 0}
                     className="w-full disabled:bg-gray-300"
