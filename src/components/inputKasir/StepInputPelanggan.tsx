@@ -29,7 +29,8 @@ export function StepInputPelanggan({ dataPelanggan }: StepInputPelangganProps) {
                     onSelect={(pelanggan) => {
                         setListPelanggan({
                             kodePelanggan: pelanggan.kode,
-                            namaPelanggan: pelanggan.nama
+                            namaPelanggan: pelanggan.nama,
+                            sumberPelanggan: pelanggan.sumber
                         });
                     }}
                 />

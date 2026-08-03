@@ -94,6 +94,7 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
         const dataPelanggan = {
             kodePelanggan: listPelanggan.kodePelanggan,
             namaPelanggan: listPelanggan.namaPelanggan,
+            sumberPelanggan: listPelanggan.sumberPelanggan,
         };
 
         const basePayload = {
@@ -184,21 +185,21 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                 <div className="flex gap-3 w-full sm:w-auto">
                     <Button 
                         variant="ghost"
-                        onClick={() => handleBayar(false)}
-                        isLoading={isPending && aksiAktif === "simpan"}
-                        disabled={isPending || listBarang.length === 0}
-                        className="w-full disabled:bg-gray-300"
-                    >
-                        {isPending && aksiAktif === "simpan" ? "Menyimpan..." : "Simpan"}
-                    </Button>
-                    <Button 
-                        variant="primary"
                         onClick={() => handleBayar(true)}
                         isLoading={isPending && aksiAktif === "cetak"}
                         disabled={isPending || listBarang.length === 0}
                         className="w-full min-w-[150px] disabled:bg-gray-300"
                     >
                         {isPending && aksiAktif === "cetak" ? "Memproses..." : "Simpan & Cetak"}
+                    </Button>
+                    <Button 
+                        variant="primary"
+                        onClick={() => handleBayar(false)}
+                        isLoading={isPending && aksiAktif === "simpan"}
+                        disabled={isPending || listBarang.length === 0}
+                        className="w-full disabled:bg-gray-300"
+                    >
+                        {isPending && aksiAktif === "simpan" ? "Menyimpan..." : "Simpan"}
                     </Button>
                 </div>
             </div>

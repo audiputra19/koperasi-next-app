@@ -32,6 +32,7 @@ export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjua
         const dataPelanggan: DataPelanggan = {
             kodePelanggan: String(p.kdPelanggan),
             namaPelanggan: String(p.namaPelanggan),
+            sumberPelanggan: String(p.sumber),
         };
 
         useKasirStore.getState().setEditContext(
@@ -109,7 +110,7 @@ export default function DaftarPenjualanTable({ dataAwal, session }: DaftarPenjua
             header: 'TANGGAL', 
             sortKey: 'tanggal', 
             className: 'text-center',
-            renderCell: (p) => moment(p.tanggal).format("YYYY-MM-DD HH:mm:ss")
+            renderCell: (p) => moment(p.tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
         },
         { 
             header: 'KODE PELANGGAN', 
