@@ -11,7 +11,7 @@ export interface DataKasir {
 export interface DataPelanggan {
     kodePelanggan: string | undefined;
     namaPelanggan: string | undefined;
-    sumberPelanggan: string | undefined;
+    sumberPelanggan?: string | undefined;
 }
 
 export interface KasirPayload {
