@@ -5,12 +5,19 @@ import { addTransaksiKasir, editTransaksiKasir } from "@/src/features/penjualan/
 import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { KasirPayload, EditKasirPayload } from "@/src/types/penjualan";
+import { StrukData } from "@/src/types/struk";
 import { Button } from "../ui/Button";
 import { useToast } from "@/src/context/ToastContext";
 
 interface StepPembayaranProps {
     initialUser: { nama: string } | null;
 }
+
+const METODE_LABEL: Record<string, string> = {
+    "1": "Tunai (Cash)",
+    "2": "Kredit",
+    "3": "QRIS / E-Wallet",
+};
 
 export function StepPembayaran({ initialUser }: StepPembayaranProps) {
     const { 
@@ -26,6 +33,8 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
     } = useKasirStore();
 
     const [isPending, startTransition] = useTransition();
+    // buat nentuin tombol mana yang lagi loading (Simpan vs Simpan & Cetak)
+    const [aksiAktif, setAksiAktif] = useState<"simpan" | "cetak" | null>(null);
     const { showToast } = useToast();
     
     const searchParams = useSearchParams();
@@ -39,7 +48,29 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
         }
     }, [metode, setMetode]);
 
-    const handleBayar = async () => {
+    const bukaHalamanStruk = () => {
+        const strukData: StrukData = {
+            tanggal: dateKasir ? new Date(dateKasir).toISOString() : new Date().toISOString(),
+            pelanggan: listPelanggan?.namaPelanggan ?? "-",
+            kasir: initialUser?.nama ?? "-",
+            metode: METODE_LABEL[metode] ?? "-",
+            items: listBarang.map((item) => ({
+                namaItem: item.namaItem,
+                jumlah: item.jumlah,
+                harga: item.harga,
+            })),
+            total: total ?? 0,
+        };
+
+        sessionStorage.setItem("struk-data", JSON.stringify(strukData));
+
+        const jendelaBaru = window.open("/struk", "_blank");
+        if (!jendelaBaru) {
+            showToast("Popup diblokir browser, izinkan popup untuk mencetak.", "error");
+        }
+    };
+
+    const handleBayar = async (cetak: boolean) => {
         if (!listPelanggan || !listPelanggan.kodePelanggan || !listPelanggan.namaPelanggan) {
             showToast("Pelanggan belum dipilih", "error");
             return;
@@ -74,6 +105,8 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
             dataPelanggan,
         };
 
+        setAksiAktif(cetak ? "cetak" : "simpan");
+
         startTransition(async () => {
             let result;
 
@@ -92,9 +125,16 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                 showToast(result.error, "error");
             } else if (result.success) {
                 showToast(typeof result.success === "string" ? result.success : "Transaksi berhasil disimpan.", "success");
+
+                if (cetak) {
+                    bukaHalamanStruk();
+                }
+
                 resetKasir();
                 router.push("/inputKasir");
             }
+
+            setAksiAktif(null);
         });
     };
 
@@ -132,7 +172,7 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                 </div>
             </div>
 
-            <div className="flex justify-between gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row justify-between gap-3 pt-2">
                 <Button 
                     variant="ghost"
                     onClick={prevStep}
@@ -140,15 +180,27 @@ export function StepPembayaran({ initialUser }: StepPembayaranProps) {
                 >
                     Kembali
                 </Button>
-                <Button 
-                    variant="primary"
-                    onClick={handleBayar}
-                    isLoading={isPending}
-                    disabled={isPending || listBarang.length === 0}
-                    className="w-full disabled:bg-gray-300"
-                >
-                    {isPending ? "Memproses Data..." : isEditMode ? "Update Perubahan" : "Proses Pembayaran"}
-                </Button>
+
+                <div className="flex gap-3 w-full sm:w-auto">
+                    <Button 
+                        variant="ghost"
+                        onClick={() => handleBayar(false)}
+                        isLoading={isPending && aksiAktif === "simpan"}
+                        disabled={isPending || listBarang.length === 0}
+                        className="w-full disabled:bg-gray-300"
+                    >
+                        {isPending && aksiAktif === "simpan" ? "Menyimpan..." : "Simpan"}
+                    </Button>
+                    <Button 
+                        variant="primary"
+                        onClick={() => handleBayar(true)}
+                        isLoading={isPending && aksiAktif === "cetak"}
+                        disabled={isPending || listBarang.length === 0}
+                        className="w-full min-w-[150px] disabled:bg-gray-300"
+                    >
+                        {isPending && aksiAktif === "cetak" ? "Memproses..." : "Simpan & Cetak"}
+                    </Button>
+                </div>
             </div>
         </div>
     );
