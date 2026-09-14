@@ -62,9 +62,12 @@ export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLa
         const query = new URLSearchParams();
         query.set("startDate", startDate);
         query.set("endDate", endDate);
-        // if (listPelanggan?.kodePelanggan) {
-        //     query.set("kdPelanggan", listPelanggan.kodePelanggan);
-        // }
+        
+        const pathButuhPelanggan = ["/laporanPenjualanDetail", "/laporanPenjualanRekap"];
+        if (pathButuhPelanggan.includes(path) && listPelanggan?.kodePelanggan) {
+            query.set("kdPelanggan", listPelanggan.kodePelanggan);
+        }
+
         if (autoPrint) {
             query.set("autoPrint", "true");
         }

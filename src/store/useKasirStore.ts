@@ -97,7 +97,7 @@ export const useKasirStore = create<KasirState>()(
                     listPelanggan: dataPelanggan,
                     listBarang: [],       // kosongkan dulu, biar tidak nampilin barang transaksi sebelumnya sekilas
                     metode: metodeLama,
-                    dateKasir: tanggalLama,
+                    dateKasir: moment(tanggalLama).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss"),
                     total: 0,
                 });
             },
@@ -117,7 +117,7 @@ export const useKasirStore = create<KasirState>()(
                     listPelanggan: dataPelanggan,
                     listBarang: dataKasir,
                     metode: metodeLama,
-                    dateKasir: tanggalLama,
+                    dateKasir: moment(tanggalLama).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss"),
                     total: totalLama
                 });
             },
