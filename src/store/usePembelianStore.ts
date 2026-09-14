@@ -70,7 +70,8 @@ export const usePembelianStore = create<PembelianState>()(
                         b.kodeItem === barangBaru.kodeItem ? { ...b, jumlah: b.jumlah + 1 } : b
                     );
                 } else {
-                    updatedList = [...state.listBarang, { ...barangBaru, jumlah: 1 }];
+                    // updatedList = [...state.listBarang, { ...barangBaru, jumlah: 1 }];
+                    updatedList = [{ ...barangBaru, jumlah: 1 }, ...state.listBarang];
                 }
 
                 const newTotal = updatedList.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
