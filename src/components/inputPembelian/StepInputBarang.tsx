@@ -123,7 +123,7 @@ export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
                                         <td className="p-3 font-medium min-w-[200px]">{item.namaItem}</td>
                                         <td className="p-3 font-medium min-w-[100px]">{item.jenis}</td>
                                         <td className="p-3 text-right min-w-[150px]">
-                                            <div className={cn(
+                                            {/* <div className={cn(
                                                 !isEditMode && "flex justify-end items-center gap-3"
                                             )}>
                                                 Rp {item.harga.toLocaleString()}
@@ -136,6 +136,16 @@ export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
                                                         />
                                                     </div>
                                                 )}
+                                            </div> */}
+                                            <div className={cn("flex justify-end items-center gap-3")}>
+                                                Rp {item.harga.toLocaleString()}
+                                                <div className="tooltip" data-tip="Edit Harga">
+                                                    <ClipboardPen
+                                                        className="text-primary cursor-pointer p-1 rounded hover:bg-base-300"
+                                                        size={25} 
+                                                        onClick={() => onEditHarga(item.kodeItem)}
+                                                    />
+                                                </div>
                                             </div>
                                         </td>
                                         
