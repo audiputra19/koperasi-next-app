@@ -101,7 +101,6 @@ export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
                             <tr className="bg-base-200 font-semibold border-b border-base-300">
                                 <th className="p-3">Kode</th>
                                 <th className="p-3">Nama Item</th>
-                                <th className="p-3">Jenis</th>
                                 <th className="p-3">Harga</th>
                                 <th className="p-3">Jumlah</th>
                                 <th className="p-3">Expired</th>
@@ -121,7 +120,6 @@ export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
                                     <tr key={item.kodeItem} className="hover:bg-base-200">
                                         <td className="p-3 font-mono text-xs min-w-[100px]">{item.barcode}</td>
                                         <td className="p-3 font-medium min-w-[200px]">{item.namaItem}</td>
-                                        <td className="p-3 font-medium min-w-[100px]">{item.jenis}</td>
                                         <td className="p-3 text-right min-w-[150px]">
                                             {/* <div className={cn(
                                                 !isEditMode && "flex justify-end items-center gap-3"

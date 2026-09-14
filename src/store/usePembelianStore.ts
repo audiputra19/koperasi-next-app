@@ -110,7 +110,7 @@ export const usePembelianStore = create<PembelianState>()(
                     listSupplier: dataSupplier,
                     listBarang: [],
                     metode: metodeLama,
-                    datePembelian: tanggalLama,
+                    datePembelian: moment(tanggalLama).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss"),
                     total: 0,
                 });
             },
@@ -130,7 +130,7 @@ export const usePembelianStore = create<PembelianState>()(
                     listSupplier: dataSupplier,
                     listBarang: dataPembelian,
                     metode: metodeLama,
-                    datePembelian: tanggalLama,
+                    datePembelian: moment(tanggalLama).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss"),
                     total: totalLama
                 });
             },
