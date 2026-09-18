@@ -23,6 +23,7 @@ interface KasirState {
     updateQtyBarang: (kodeItem: string, jumlahBaru: number) => void;
     removeBarang: (kodeItem: string) => void;
     setMetode: (metodePilihan: string) => void;
+    setDateKasir: (tanggal: string) => void;
     
     // Injector untuk mode EDIT
     setEditContext: (
@@ -91,6 +92,10 @@ export const useKasirStore = create<KasirState>()(
             }),
 
             setMetode: (metodePilihan) => set({ metode: metodePilihan }),
+
+            setDateKasir: (tanggal) => set({
+                dateKasir: moment(tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
+            }),
 
             setEditContext: (dataPelanggan, metodeLama, tanggalLama) => {
                 set({

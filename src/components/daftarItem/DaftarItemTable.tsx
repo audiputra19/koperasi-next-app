@@ -1,10 +1,13 @@
 'use client';
 
 import DataTable, { TableColumn } from "@/src/components/ui/DataTable";
+import { ItemService } from "@/src/features/menu/item/item.service";
 import { cn } from "@/src/lib/cn";
 import { SessionPayload } from "@/src/types/auth";
 import { DaftarItem } from "@/src/types/menu";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type TableItem = DaftarItem & Record<string, unknown>;
 
@@ -15,15 +18,40 @@ interface DaftarItemTableProps {
 }
 
 export default function DaftarItemTable({ dataAwal, onEdit, session }: DaftarItemTableProps) {
+    const router = useRouter();
+    const [isDeleting, setIsDeleting] = useState(false);
     const isAdmin = session?.role === "Admin";
     const isKasir = session?.role === "Kasir";
     const canEdit = isAdmin || isKasir;
+
+    const handleDelete = async (kode: string) => {
+        const confirmed = window.confirm(`Apakah Anda yakin ingin menghapus item ini?`);
+        if (!confirmed) return;
+
+        try {
+            setIsDeleting(true);
+
+            const res = await ItemService.deleteItem(kode);
+
+            alert(res?.message || "Data item berhasil dihapus.");
+
+            router.refresh();
+
+            // alert("Data item berhasil dihapus.");
+        } catch (error) {
+            console.error("Gagal menghapus item:", error);
+            // alert("Terjadi kesalahan saat menghapus data.");
+        } finally {
+            setIsDeleting(false);
+        }
+    }
 
     const actionColumn: TableColumn<TableItem> = {
         header: 'ACTION',
         className: 'text-center',
         renderCell: (p) => (
-            <div className="tooltip" data-tip="Edit">
+            <div className="flex gap-1 items-center">
+                <div className="tooltip" data-tip="Edit">
                 <button
                     className={cn(
                         "p-1.5 rounded cursor-pointer",
@@ -33,6 +61,19 @@ export default function DaftarItemTable({ dataAwal, onEdit, session }: DaftarIte
                 >
                     <SquarePen size={20}/>
                 </button>
+            </div>
+                <div className="tooltip" data-tip="Hapus">
+                    <button 
+                        disabled={isDeleting}
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => handleDelete(p.kode)}
+                    >
+                        <Trash2 size={20}/>
+                    </button> 
+                </div>
             </div>
         )
     };

@@ -5,7 +5,7 @@ import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 import { cn } from "@/src/lib/cn";
 import { usePembelianStore } from "@/src/store/usePembelianStore";
 import { SessionPayload } from "@/src/types/auth";
-import { DaftarPembelian, DataPembelian, DataSupplier } from "@/src/types/pembelian";
+import { DaftarPembelian, DataSupplier } from "@/src/types/pembelian";
 import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
 import { useRouter } from "next/navigation";
