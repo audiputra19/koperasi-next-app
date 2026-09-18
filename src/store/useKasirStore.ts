@@ -94,7 +94,7 @@ export const useKasirStore = create<KasirState>()(
             setMetode: (metodePilihan) => set({ metode: metodePilihan }),
 
             setDateKasir: (tanggal) => set({
-                dateKasir: moment(tanggal).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
+                dateKasir: moment.tz(tanggal, "Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
             }),
 
             setEditContext: (dataPelanggan, metodeLama, tanggalLama) => {

@@ -30,7 +30,7 @@ export function StepInputPelanggan({ dataPelanggan }: StepInputPelangganProps) {
                     onChange={(e) => {
                         if (!e.target.value) return;
                         // pertahankan jam saat ini, hanya ganti tanggalnya
-                        const jamSekarang = moment(dateKasir).format("HH:mm:ss");
+                        const jamSekarang = moment(dateKasir).tz("Asia/Jakarta").format("HH:mm:ss");
                         const tanggalBaru = `${e.target.value} ${jamSekarang}`;
                         setDateKasir(tanggalBaru);
                     }}
