@@ -16,7 +16,7 @@ export function useDataTable<T extends Record<string, unknown>>({
     const [searchQuery, setSearchQuery] = useState('');
     const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: 'asc' | 'desc' } | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(25);
 
     // 1. Handle Sort Trigger
     const handleSort = (key: keyof T) => {
