@@ -11,14 +11,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useKasirStore } from "../../../../store/useKasirStore";
 import { PenjualanService } from "@/src/features/penjualan/penjualan.service";
+import { SessionPayload } from "@/src/types/auth";
 
 interface InputKasirClientProps {
     dataPelanggan: DaftarPelanggan[];
     dataItem: DaftarItem[];
     initialUser: { nama: string } | null;
+    session: SessionPayload | null;
 }
 
-export function InputKasirClient({ dataPelanggan, dataItem, initialUser }: InputKasirClientProps) {
+export function InputKasirClient({ dataPelanggan, dataItem, initialUser, session }: InputKasirClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const idTransaksi = searchParams.get("id");
@@ -67,7 +69,7 @@ export function InputKasirClient({ dataPelanggan, dataItem, initialUser }: Input
     const renderStepContent = () => {
         switch(step) {
             case 1:
-                return <StepInputPelanggan dataPelanggan={dataPelanggan} />;
+                return <StepInputPelanggan dataPelanggan={dataPelanggan} session={session} />;
             case 2:    
                 return <StepInputBarang dataItem={dataItem} />;
             case 3:

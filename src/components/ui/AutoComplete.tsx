@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react";
 interface AutocompleteProps<T> {
     options: T[];
     placeholder: string;
-    selectedValue: string; 
+    selectedValue?: string; 
     onSelect: (item: T) => void;
     valueKey: keyof T;
     labelKey: keyof T;
@@ -16,28 +16,22 @@ interface AutocompleteProps<T> {
     onQueryChange?: (query: string) => void;
 }
 
-// Autocomplete ini wajib kombinasi antara kode dan nama!
 export function Autocomplete<T>({ 
     options, 
     placeholder, 
-    selectedValue, 
+    selectedValue = "", 
     onSelect, 
     valueKey,
     labelKey,
-    isLoading = false ,
+    isLoading = false,
     onClear,
     onQueryChange
 }: AutocompleteProps<T>) {
-    const [query, setQuery] = useState(selectedValue || "");
+    const [query, setQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [prevSelectedValue, setPrevSelectedValue] = useState(selectedValue);
 
-    if (selectedValue !== prevSelectedValue) {
-        setPrevSelectedValue(selectedValue);
-        setQuery(selectedValue || "");
-    }
-
+    // Menutup dropdown saat klik di luar area komponen
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -48,12 +42,13 @@ export function Autocomplete<T>({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const filteredOptions = query === "" 
+    // Filter data berdasarkan nama (labelKey) atau kode (valueKey)
+    const filteredOptions = query.trim() === "" 
         ? options 
         : options.filter((item) => {
-            const namaStr = String(item[labelKey] || "").toLowerCase();
-            const kodeStr = String(item[valueKey] || "").toLowerCase();
-            const queryStr = String(query || "").toLowerCase();
+            const namaStr = String(item[labelKey] ?? "").toLowerCase();
+            const kodeStr = String(item[valueKey] ?? "").toLowerCase();
+            const queryStr = query.trim().toLowerCase();
 
             return namaStr.includes(queryStr) || kodeStr.includes(queryStr);
         });
@@ -66,7 +61,7 @@ export function Autocomplete<T>({
             if (!currentQuery) return;
 
             const exactMatch = options.find(
-                (item) => String(item[valueKey] || "").toLowerCase() === currentQuery
+                (item) => String(item[valueKey] ?? "").toLowerCase() === currentQuery
             );
 
             if (exactMatch) {
@@ -79,7 +74,7 @@ export function Autocomplete<T>({
                 setIsOpen(false);
             }
         }
-    };    
+    };   
 
     return (
         <div ref={containerRef} className="relative w-full">
@@ -90,9 +85,10 @@ export function Autocomplete<T>({
                     value={query}
                     disabled={isLoading}
                     onChange={(e) => {
-                        setQuery(e.target.value);
+                        const val = e.target.value;
+                        setQuery(val);
                         setIsOpen(true);
-                        onQueryChange?.(e.target.value); 
+                        onQueryChange?.(val); 
                     }}
                     onFocus={() => setIsOpen(true)}
                     onKeyDown={handleKeyDown}
@@ -128,12 +124,12 @@ export function Autocomplete<T>({
             {!isLoading && isOpen && filteredOptions.length > 0 && (
                 <ul className="absolute z-50 w-full mt-1 bg-base-200 border border-base-300 rounded-lg max-h-60 overflow-y-auto shadow-lg divide-y divide-base-300">
                     {filteredOptions.map((item, index) => {
-                        
-                        const itemKey = String(item[valueKey] || index); 
+                        // Gabungkan valueKey dan index agar Key dijamin unik
+                        const uniqueKey = `${String(item[valueKey] ?? "")}-${index}`; 
                         
                         return (
                             <li
-                                key={itemKey}
+                                key={uniqueKey}
                                 onClick={() => {
                                     setQuery("");
                                     onSelect(item);
@@ -142,10 +138,10 @@ export function Autocomplete<T>({
                                 className="p-2.5 hover:bg-base-300 cursor-pointer text-sm flex justify-between items-center"
                             >
                                 <span className="font-medium">
-                                    {String(item[labelKey] || "")}
+                                    {String(item[labelKey] ?? "")}
                                 </span>
                                 <span className="text-xs text-gray-400 font-mono">
-                                    [{String(item[valueKey] || "")}]
+                                    [{String(item[valueKey] ?? "")}]
                                 </span>
                             </li>
                         );

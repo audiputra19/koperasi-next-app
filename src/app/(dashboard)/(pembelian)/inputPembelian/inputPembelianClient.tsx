@@ -15,14 +15,16 @@ import { DataPembelian, HargaItem } from "@/src/types/pembelian";
 import { PembelianService } from "@/src/features/pembelian/pembelian.service";
 import { StepPembayaran } from "@/src/components/inputPembelian/StepPembayaran";
 import moment from "moment-timezone";
+import { SessionPayload } from "@/src/types/auth";
 
 interface InputPembelianClientProps {
     dataSupplier: DaftarSupplier[];
     dataItem: DaftarItem[];
     initialUser: { nama: string } | null;
+    session: SessionPayload | null;
 }
 
-export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: InputPembelianClientProps) {
+export function InputPembelianClient({ dataSupplier, dataItem, initialUser, session }: InputPembelianClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const idTransaksi = searchParams.get("id");
@@ -88,7 +90,7 @@ export function InputPembelianClient({ dataSupplier, dataItem, initialUser }: In
     const renderStepContent = () => {
         switch(step) {
             case 1:
-                return <StepInputSupplier dataSupplier={dataSupplier} />;
+                return <StepInputSupplier dataSupplier={dataSupplier} session={session} />;
             case 2:    
                 return <StepInputBarang dataItem={dataItem} onEditHarga={handleOpenEditModal} />;
             case 3:

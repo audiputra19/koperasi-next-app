@@ -5,7 +5,7 @@ import { ItemService } from "@/src/features/menu/item/item.service";
 import { cn } from "@/src/lib/cn";
 import { SessionPayload } from "@/src/types/auth";
 import { DaftarItem } from "@/src/types/menu";
-import { SquarePen, Trash2 } from "lucide-react";
+import { FileText, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -14,10 +14,11 @@ type TableItem = DaftarItem & Record<string, unknown>;
 interface DaftarItemTableProps {
     dataAwal: DaftarItem[];
     onEdit: (item: DaftarItem) => void;
+    onStock: (item: DaftarItem) => void;
     session: SessionPayload | null;
 }
 
-export default function DaftarItemTable({ dataAwal, onEdit, session }: DaftarItemTableProps) {
+export default function DaftarItemTable({ dataAwal, onEdit, onStock, session }: DaftarItemTableProps) {
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState(false);
     const isAdmin = session?.role === "Admin";
@@ -51,17 +52,28 @@ export default function DaftarItemTable({ dataAwal, onEdit, session }: DaftarIte
         className: 'text-center',
         renderCell: (p) => (
             <div className="flex gap-1 items-center">
+                <div className="tooltip" data-tip="Kartu Stok">
+                    <button
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => onStock(p)}
+                    >
+                        <FileText size={20}/>
+                    </button>
+                </div>
                 <div className="tooltip" data-tip="Edit">
-                <button
-                    className={cn(
-                        "p-1.5 rounded cursor-pointer",
-                        "hover:bg-base-300"
-                    )}
-                    onClick={() => onEdit(p)}
-                >
-                    <SquarePen size={20}/>
-                </button>
-            </div>
+                    <button
+                        className={cn(
+                            "p-1.5 rounded cursor-pointer",
+                            "hover:bg-base-300"
+                        )}
+                        onClick={() => onEdit(p)}
+                    >
+                        <SquarePen size={20}/>
+                    </button>
+                </div>
                 <div className="tooltip" data-tip="Hapus">
                     <button 
                         disabled={isDeleting}

@@ -5,15 +5,18 @@ import { DaftarPelanggan } from "@/src/types/menu";
 import { Button } from "../ui/Button";
 import { Autocomplete } from "../ui/AutoComplete";
 import moment from "moment-timezone";
+import { SessionPayload } from "@/src/types/auth";
 
 interface StepInputPelangganProps {
     dataPelanggan: DaftarPelanggan[];
+    session: SessionPayload | null;
 }
 
-export function StepInputPelanggan({ dataPelanggan }: StepInputPelangganProps) {
+export function StepInputPelanggan({ dataPelanggan, session }: StepInputPelangganProps) {
     const { listPelanggan, setListPelanggan, nextStep, dateKasir, setDateKasir } = useKasirStore();
 
     const tanggalValue = moment(dateKasir).tz("Asia/Jakarta").format("YYYY-MM-DD");
+    const isAdmin = session?.role === "Admin";
 
     return (
         <div className="p-6 border border-base-300 rounded-lg bg-base-100 space-y-4 max-w-md mx-auto">
@@ -21,6 +24,7 @@ export function StepInputPelanggan({ dataPelanggan }: StepInputPelangganProps) {
                 <h3 className="text-lg font-bold">Pilih Pelanggan</h3>
             </div>
 
+            {(isAdmin) && (
             <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-500">Tanggal Transaksi</label>
                 <input
@@ -36,6 +40,7 @@ export function StepInputPelanggan({ dataPelanggan }: StepInputPelangganProps) {
                     }}
                 />
             </div>
+            )}
 
             <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-500">Cari Pelanggan</label>

@@ -27,6 +27,7 @@ interface PembelianState {
     updateHargaBarang: (kodeItem: string, hargaBaru: number) => void;
     removeBarang: (kodeItem: string) => void;
     setMetode: (metodePilihan: string) => void;
+    setDatePembelian: (tanggal: string) => void;
 
     setEditContext: (
         dataSupplier: DataSupplier,
@@ -104,6 +105,10 @@ export const usePembelianStore = create<PembelianState>()(
             }),
 
             setMetode: (metodePilihan) => set({ metode: metodePilihan }),
+
+            setDatePembelian: (tanggal) => set({
+                datePembelian: moment.tz(tanggal, "Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
+            }),
 
             setEditContext: (dataSupplier, metodeLama, tanggalLama) => {
                 set({

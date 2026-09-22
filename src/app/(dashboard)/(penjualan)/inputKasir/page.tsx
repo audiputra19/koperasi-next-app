@@ -19,6 +19,7 @@ export default async function InputKasir() {
                 dataPelanggan={daftarPelanggan || []}
                 dataItem={daftarItem || []} 
                 initialUser={user}
+                session={session}
             />
         </main>
     )

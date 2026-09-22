@@ -19,6 +19,7 @@ export default async function InputPembelian() {
                 dataSupplier={daftarSupplier || []}
                 dataItem={daftarItem || []}
                 initialUser={user}
+                session={session}
             />
         </main>
     )
