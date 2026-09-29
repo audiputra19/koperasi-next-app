@@ -75,15 +75,15 @@ export default function Sidebar({ session }: SidebarProps) {
             icon: <FileText size={22} />,
             path: '/laporan'
         },
-        {
-            id: '7',
-            name: 'Marketplace',
-            icon: <Store size={22} />,
-            subMenu: [
-                { id: '7-1', name: 'Pre Order', path: '/preOrder' },
-                { id: '7-2', name: 'Belanja', path: '/belanja' }
-            ]
-        },
+        // {
+        //     id: '7',
+        //     name: 'Marketplace',
+        //     icon: <Store size={22} />,
+        //     subMenu: [
+        //         { id: '7-1', name: 'Pre Order', path: '/preOrder' },
+        //         { id: '7-2', name: 'Belanja', path: '/belanja' }
+        //     ]
+        // },
     ];
 
     const visibleMenu = menuData.map((item) => {
