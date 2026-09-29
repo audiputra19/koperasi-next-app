@@ -4,15 +4,15 @@ import logo from '@/public/images/koperasi-logo.jpg';
 import { useSidebarMobile } from "@/src/context/SidebarContext";
 import { logout } from '@/src/features/auth/action';
 import { cn } from "@/src/lib/cn";
+import { routeAccess } from '@/src/lib/roleAccess';
 import { AuthState, Role, SessionPayload } from '@/src/types/auth';
 import { MenuItem, MenuItemWithDropdown, SidebarMenuItem } from "@/src/types/sidebar";
-import { ChevronDown, FileText, Layers, LayoutDashboard, LogOut, Package, PanelLeftClose, PanelLeftOpen, Settings2, ShoppingCart, X } from "lucide-react";
+import { ChevronDown, FileText, Layers, LayoutDashboard, LogOut, Package, PackageOpen, PanelLeftClose, PanelLeftOpen, Settings2, Store, Warehouse, X } from "lucide-react";
 import Image from "next/image";
 import Link from 'next/link';
 import { useActionState, useState } from "react";
 import SidebarDropdown from "./SidebarDropdown";
 import SidebarLink from "./SidebarLink";
-import { routeAccess } from '@/src/lib/roleAccess';
 
 interface SidebarProps {
     session: SessionPayload | null
@@ -44,28 +44,46 @@ export default function Sidebar({ session }: SidebarProps) {
         },
         {
             id: '3',
-            name: 'Pembelian',
-            icon: <ShoppingCart size={22} />,
+            name: 'Persediaan',
+            icon: <Warehouse size={22} />,
             subMenu: [
-                { id: '3-1', name: 'Daftar Pembelian', path: '/daftarPembelian' },
-                { id: '3-2', name: 'Input Pembelian', path: '/inputPembelian' }
+                { id: '3-1', name: 'Daftar SON', path: '/daftarSon' },
+                { id: '3-2', name: 'Input SON', path: '/inputSon' }
             ]
         },
         {
             id: '4',
-            name: 'Penjualan',
+            name: 'Pembelian',
             icon: <Package size={22} />,
             subMenu: [
-                { id: '4-1', name: 'Daftar Penjualan', path: '/daftarPenjualan' },
-                { id: '4-2', name: 'Input Kasir', path: '/inputKasir' }
+                { id: '4-1', name: 'Daftar Pembelian', path: '/daftarPembelian' },
+                { id: '43-2', name: 'Input Pembelian', path: '/inputPembelian' }
             ]
         },
         {
             id: '5',
+            name: 'Penjualan',
+            icon: <PackageOpen size={22} />,
+            subMenu: [
+                { id: '5-1', name: 'Daftar Penjualan', path: '/daftarPenjualan' },
+                { id: '5-2', name: 'Input Kasir', path: '/inputKasir' }
+            ]
+        },
+        {
+            id: '6',
             name: 'Laporan',
             icon: <FileText size={22} />,
             path: '/laporan'
-        }
+        },
+        {
+            id: '7',
+            name: 'Marketplace',
+            icon: <Store size={22} />,
+            subMenu: [
+                { id: '7-1', name: 'Pre Order', path: '/preOrder' },
+                { id: '7-2', name: 'Belanja', path: '/belanja' }
+            ]
+        },
     ];
 
     const visibleMenu = menuData.map((item) => {
