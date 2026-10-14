@@ -204,7 +204,7 @@ export default function FormItem({ onClose, initialData }: FormItemProps) {
                     />
                 </div>
             </div>
-            <div className="form-control w-full">
+            {/* <div className="form-control w-full">
                 <label className="label py-1"><span className="label-text font-medium text-sm">Stok Awal</span></label>
                 <input 
                     type="number"
@@ -214,7 +214,7 @@ export default function FormItem({ onClose, initialData }: FormItemProps) {
                     defaultValue={initialData?.stok}
                     required
                 />
-            </div>
+            </div> */}
             <div className="form-control w-full">
                 <label className="label py-1"><span className="label-text font-medium text-sm">Stok Minimal</span></label>
                 <input 

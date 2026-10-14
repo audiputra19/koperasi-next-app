@@ -10,7 +10,7 @@ export async function addItem(
 ): Promise<MenuState> {
     const barcode = formData.get("barcode");
     const nama = formData.get("nama");
-    const stok = formData.get("stok");
+    // const stok = formData.get("stok");
     const satuan = formData.get("satuan");
     const rak = formData.get("rak");
     const jenis = formData.get("jenis");
@@ -29,7 +29,7 @@ export async function addItem(
             body: JSON.stringify({
                 barcode,
                 nama,
-                stok,
+                // stok,
                 satuan,
                 rak,
                 jenis,
@@ -63,7 +63,7 @@ export async function editItem (
     const kdItem = formData.get("id_item");
     const barcode = formData.get("barcode");
     const nama = formData.get("nama");
-    const stok = formData.get("stok");
+    // const stok = formData.get("stok");
     const satuan = formData.get("satuan");
     const rak = formData.get("rak");
     const jenis = formData.get("jenis");
@@ -87,7 +87,7 @@ export async function editItem (
                 kdItem,
                 barcode,
                 nama,
-                stok,
+                // stok,
                 satuan,
                 rak,
                 jenis,
