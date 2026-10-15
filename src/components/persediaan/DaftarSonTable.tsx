@@ -22,7 +22,8 @@ export default function DaftarSonTable({ initialData, session }: DaftarSonTableP
     const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
     const isAdmin = session?.role === "Admin";
     const isKasir = session?.role === "Kasir";
-    const canEdit = isAdmin || isKasir;
+    // const canEdit = isAdmin || isKasir;
+    const canEdit = isAdmin;
 
     const handleEdit = (row: TableSonItem) => {
         setLoadingEditId(row.sonNumber);

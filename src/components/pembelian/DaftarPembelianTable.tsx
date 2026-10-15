@@ -23,7 +23,8 @@ export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembel
     const [isDeleting, setIsDeleting] = useState(false);
     const isAdmin = session?.role === "Admin";
     const isKasir = session?.role === "Kasir";
-    const canEdit = isAdmin || isKasir;
+    // const canEdit = isAdmin || isKasir;
+    const canEdit = isAdmin;
     const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
 
     const handleEdit = (p: TablePembelian) => {
