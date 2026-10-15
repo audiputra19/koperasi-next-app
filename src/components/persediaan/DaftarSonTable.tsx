@@ -6,6 +6,7 @@ import { cn } from "@/src/lib/cn";
 import { SessionPayload } from "@/src/types/auth";
 import { SonListItem } from "@/src/types/son";
 import { SquarePen, Trash2 } from "lucide-react";
+import moment from "moment-timezone";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -93,7 +94,7 @@ export default function DaftarSonTable({ initialData, session }: DaftarSonTableP
             header: 'TANGGAL',
             sortKey: 'date',
             className: 'text-center min-w-[150px]',
-            renderCell: (row) => row.date
+            renderCell: (row) => moment(row.date).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss") 
         },
         {
             header: 'TOTAL ITEM',
