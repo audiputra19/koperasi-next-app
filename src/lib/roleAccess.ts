@@ -7,6 +7,7 @@ export const routeAccess: Record<string, Role[]> = {
     "/daftarPelanggan": ["Admin", "Kasir", "Anggota"],
     "/daftarSupplier": ["Admin", "Kasir"],
     "/daftarPembelian": ["Admin", "Kasir", "Pengawas"],
+    "/daftarSon": ["Admin", "Kasir"],
     "/inputPembelian": ["Admin", "Kasir"],
     "/daftarPenjualan": ["Admin", "Pengawas", "Kasir"],
     "/inputKasir": ["Admin", "Kasir"],
