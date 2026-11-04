@@ -2,9 +2,13 @@ import { apiFetch } from "@/src/lib/apiClient"
 import { DaftarPenjualan, DaftarPenjualanDetail, DeletePenjualan } from "@/src/types/penjualan"
 
 export const PenjualanService = {
-    getDaftarPenjualan: async(): Promise<DaftarPenjualan[]> => {
+    getDaftarPenjualan: async(tglDari?: string, tglSampai?: string): Promise<DaftarPenjualan[]> => {
         return apiFetch<DaftarPenjualan[]>('/get-kasir', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tglDari, tglSampai }),
             cache: 'no-store'
         })
     },

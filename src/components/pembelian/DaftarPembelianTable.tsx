@@ -8,24 +8,35 @@ import { SessionPayload } from "@/src/types/auth";
 import { DaftarPembelian, DataSupplier } from "@/src/types/pembelian";
 import { SquarePen, Trash2 } from "lucide-react";
 import moment from "moment-timezone";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+
 
 type TablePembelian = DaftarPembelian & Record<string, unknown>;
 
 interface DaftarPembelianTableProps {
     dataAwal: DaftarPembelian[];
     session: SessionPayload | null;
+    tglDari: string;
+    tglSampai: string;
 }
 
-export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembelianTableProps) {
+export default function DaftarPembelianTable({ dataAwal, session, tglDari, tglSampai }: DaftarPembelianTableProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const [isDeleting, setIsDeleting] = useState(false);
     const isAdmin = session?.role === "Admin";
     const isKasir = session?.role === "Kasir";
     // const canEdit = isAdmin || isKasir;
     const canEdit = isAdmin;
     const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
+    const [inputDari, setInputDari] = useState(tglDari);
+    const [inputSampai, setInputSampai] = useState(tglSampai);
+
+    const terapkanPeriode = (dari: string, sampai: string) => {
+        if (!dari || !sampai) return;
+        router.push(`${pathname}?dari=${dari}&sampai=${sampai}`);
+    };
 
     const handleEdit = (p: TablePembelian) => {
         setLoadingEditId(p.idTransaksi);
@@ -155,6 +166,38 @@ export default function DaftarPembelianTable({ dataAwal, session }: DaftarPembel
             columns={columns}
             searchKeys={['noTransaksi', 'namaSupplier']}
             filenameExport="Daftar_Pembelian"
+                        toolbarExtra={
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="max-sm:w-full">Periode</span>
+                    <input
+                        type="date"
+                        className="input input-sm bg-base-200 border-0 sm:flex-1 md:min-w-[130px]"
+                        value={inputDari}
+                        max={inputSampai || undefined}
+                        onChange={(e) => {
+                            setInputDari(e.target.value);
+                            terapkanPeriode(e.target.value, inputSampai);
+                        }}
+                    />
+                    <span>s/d</span>
+                    <input
+                        type="date"
+                        className="input input-sm bg-base-200 border-0 sm:flex-1 md:min-w-[130px]"
+                        value={inputSampai}
+                        min={inputDari || undefined}
+                        onChange={(e) => {
+                            setInputSampai(e.target.value);
+                            terapkanPeriode(inputDari, e.target.value);
+                        }}
+                    />
+                    <button
+                        className="btn btn-sm btn-ghost max-sm:w-full"
+                        onClick={() => router.push(pathname)}
+                    >
+                        Reset
+                    </button>
+                </div>
+            }
             excelMapping={(p, idx) => ({
                 No: idx + 1,
                 NoTransaksi: p.idTransaksi,

@@ -14,6 +14,7 @@ interface AutocompleteProps<T> {
     isLoading?: boolean;
     onClear?: () => void;
     onQueryChange?: (query: string) => void;
+    keepSelected?: boolean; // baru: tampilkan nama terpilih di input (default false)
 }
 
 export function Autocomplete<T>({ 
@@ -25,10 +26,12 @@ export function Autocomplete<T>({
     labelKey,
     isLoading = false,
     onClear,
-    onQueryChange
+    onQueryChange,
+    keepSelected = false // baru
 }: AutocompleteProps<T>) {
     const [query, setQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
+    const [isTyping, setIsTyping] = useState(false); // baru
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Menutup dropdown saat klik di luar area komponen
@@ -36,19 +39,33 @@ export function Autocomplete<T>({
         function handleClickOutside(event: MouseEvent) {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
+                if (keepSelected) setIsTyping(false); // baru: batal mengetik -> kembali ke nama terpilih
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    }, [keepSelected]);
+
+    // baru: nilai yang tampil di input diturunkan langsung saat render (tanpa useEffect)
+    // keepSelected + belum mengetik -> tampilkan selectedValue, selain itu -> query
+    const displayValue = keepSelected && !isTyping ? selectedValue : query;
+
+    // baru: setelah memilih item, kosongkan query kecuali keepSelected aktif
+    const resetQueryAfterSelect = () => {
+        setIsTyping(false);
+        if (!keepSelected) setQuery("");
+    };
+
+    // baru: saat keepSelected dan user belum mengetik, daftar tidak difilter oleh nama terpilih
+    const activeQuery = keepSelected && !isTyping ? "" : query;
 
     // Filter data berdasarkan nama (labelKey) atau kode (valueKey)
-    const filteredOptions = query.trim() === "" 
+    const filteredOptions = activeQuery.trim() === "" 
         ? options 
         : options.filter((item) => {
             const namaStr = String(item[labelKey] ?? "").toLowerCase();
             const kodeStr = String(item[valueKey] ?? "").toLowerCase();
-            const queryStr = query.trim().toLowerCase();
+            const queryStr = activeQuery.trim().toLowerCase();
 
             return namaStr.includes(queryStr) || kodeStr.includes(queryStr);
         });
@@ -65,11 +82,11 @@ export function Autocomplete<T>({
             );
 
             if (exactMatch) {
-                setQuery("");
+                resetQueryAfterSelect();
                 onSelect(exactMatch);
                 setIsOpen(false);
             } else if (filteredOptions.length === 1) {
-                setQuery("");
+                resetQueryAfterSelect();
                 onSelect(filteredOptions[0]);
                 setIsOpen(false);
             }
@@ -82,15 +99,19 @@ export function Autocomplete<T>({
                 <input
                     type="text"
                     placeholder={placeholder}
-                    value={query}
+                    value={displayValue}
                     disabled={isLoading}
                     onChange={(e) => {
                         const val = e.target.value;
+                        setIsTyping(true); // baru
                         setQuery(val);
                         setIsOpen(true);
                         onQueryChange?.(val); 
                     }}
-                    onFocus={() => setIsOpen(true)}
+                    onFocus={(e) => {
+                        setIsOpen(true);
+                        if (keepSelected) e.target.select(); // baru: blok teks agar mudah diganti
+                    }}
                     onKeyDown={handleKeyDown}
                     className="w-full border border-base-300 p-2.5 pr-10 rounded-lg text-sm bg-base-100 focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none"
                 />
@@ -110,6 +131,7 @@ export function Autocomplete<T>({
                                 "hover:bg-base-200"
                             )}
                             onClick={() => {
+                                setIsTyping(false); // baru
                                 setQuery("");
                                 onClear?.();
                                 onQueryChange?.("");
@@ -131,7 +153,7 @@ export function Autocomplete<T>({
                             <li
                                 key={uniqueKey}
                                 onClick={() => {
-                                    setQuery("");
+                                    resetQueryAfterSelect();
                                     onSelect(item);
                                     setIsOpen(false);
                                 }}

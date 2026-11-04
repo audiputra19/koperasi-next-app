@@ -19,6 +19,7 @@ interface DataTableProps<T extends Record<string, unknown>> {
     filenameExport?: string;
     excelMapping: (item: T, idx: number) => Record<string, unknown>;
     pdfMapping: (item: T, idx: number) => (string | number)[];
+    toolbarExtra?: React.ReactNode;
 }
 
 export default function DataTable<T extends Record<string, unknown>>({
@@ -27,7 +28,8 @@ export default function DataTable<T extends Record<string, unknown>>({
     searchKeys,
     filenameExport = "export-data",
     excelMapping,
-    pdfMapping
+    pdfMapping,
+    toolbarExtra
 }: DataTableProps<T>) {
     
     const {
@@ -71,6 +73,7 @@ export default function DataTable<T extends Record<string, unknown>>({
                                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                             />
                         </div>
+                        {toolbarExtra}
                         <div className="flex gap-2 w-full sm:w-auto justify-end">
                             <button 
                                 onClick={handleDownloadExcel} 

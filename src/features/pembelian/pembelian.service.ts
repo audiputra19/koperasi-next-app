@@ -2,9 +2,13 @@ import { apiFetch } from "@/src/lib/apiClient"
 import { DaftarPembelian, DaftarPembelianDetail, DeletePembelian, HargaItem } from "@/src/types/pembelian"
 
 export const PembelianService = {
-    getDaftarPembelian: async(): Promise<DaftarPembelian[]> => {
+    getDaftarPembelian: async(tglDari?: string, tglSampai?: string): Promise<DaftarPembelian[]> => {
         return apiFetch<DaftarPembelian[]>('/get-pembelian', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tglDari, tglSampai }),
             cache: 'no-store'
         })
     },

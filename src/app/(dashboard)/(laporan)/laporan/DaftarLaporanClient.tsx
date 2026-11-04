@@ -151,6 +151,7 @@ export default function DaftarLaporanClient({ dataPelanggan, session }: DaftarLa
                                     selectedValue={listPelanggan?.namaPelanggan || ""}
                                     valueKey="kode"
                                     labelKey="nama"
+                                    keepSelected
                                     onSelect={(pelanggan) => {
                                         setListPelanggan({
                                             kodePelanggan: pelanggan.kode,
