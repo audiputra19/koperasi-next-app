@@ -74,7 +74,7 @@ export function Autocomplete<T>({
         if (e.key === "Enter") {
             e.preventDefault(); 
 
-            const currentQuery = query.trim().toLowerCase();
+            const currentQuery = activeQuery.trim().toLowerCase();
             if (!currentQuery) return;
 
             const exactMatch = options.find(
@@ -162,9 +162,11 @@ export function Autocomplete<T>({
                                 <span className="font-medium">
                                     {String(item[labelKey] ?? "")}
                                 </span>
-                                <span className="text-xs text-gray-400 font-mono">
-                                    [{String(item[valueKey] ?? "")}]
-                                </span>
+                                {String(item[valueKey] ?? "") && (
+                                    <span className="text-xs text-gray-400 font-mono">
+                                        [{String(item[valueKey])}]
+                                    </span>
+                                )}
                             </li>
                         );
                     })}

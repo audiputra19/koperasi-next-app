@@ -3,7 +3,7 @@
 import { routeAccess } from "@/src/lib/roleAccess";
 import { Role, SessionPayload } from "@/src/types/auth";
 import clsx from "clsx";
-import { FileText, LayoutDashboard, Package, PackageOpen } from "lucide-react";
+import { FileText, LayoutDashboard, Package, PackageOpen, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -38,10 +38,19 @@ export default function TabBarMobile({ session }: TabBarMobileProps) {
             name: 'Laporan',
             icon: <FileText size={22} />,
             path: '/laporan'
+        },
+        {
+            id: '5',
+            name: 'Belanja',
+            icon: <ShoppingCart size={22} />,
+            path: '/belanja',
+            onlyRoles: ["Anggota"],
         }
     ];
 
     const visibleMenu = menuData.filter((item) => {
+        if (item.onlyRoles && !item.onlyRoles.includes(role)) return false;
+
         const allowed = routeAccess[item.path];
         return !allowed || allowed.includes(role);
     });
