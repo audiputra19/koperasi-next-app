@@ -11,6 +11,7 @@ export const routeAccess: Record<string, Role[]> = {
     "/inputPembelian": ["Admin", "Kasir"],
     "/daftarPenjualan": ["Admin", "Pengawas", "Kasir"],
     "/inputKasir": ["Admin", "Kasir"],
+    "/inputSon": ["Admin", "Kasir"],
 };
 
 export function getDefaultRoute(role?: Role): string {
