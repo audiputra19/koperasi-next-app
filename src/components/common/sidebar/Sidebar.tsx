@@ -117,11 +117,11 @@ export default function Sidebar({ session }: SidebarProps) {
             )}
             <aside
                 className={cn(
-                    "bg-base-100 h-screen border-r border-base-300 p-3 transition-all duration-300 z-50 hidden md:flex md:flex-col md:sticky top-0",
+                    "bg-base-100 border-r border-base-300 p-3 transition-all duration-300 z-50 hidden md:flex md:flex-col md:sticky top-0",
                     isCollapsed ? 'sm:w-[78px]' : 'sm:w-[240px]',
-                    
+
                     // Mobile
-                    "fixed w-[250px] flex flex-col",
+                    "fixed top-0 left-0 w-[250px] flex flex-col h-dvh md:h-screen",
                     isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
                 )}
             >
@@ -173,7 +173,7 @@ export default function Sidebar({ session }: SidebarProps) {
                     })}
                 </div>
 
-                <div className="sm:hidden mt-auto pt-3 px-1 bg-base-100 border-t border-base-300 shrink-0">
+                <div className="sm:hidden mt-auto pt-3 px-1 pb-[env(safe-area-inset-bottom)] bg-base-100 border-t border-base-300 shrink-0">
                     <div className={cn(
                         "flex items-center gap-2 justify-between"
                     )}>
