@@ -54,7 +54,7 @@ export const usePembelianStore = create<PembelianState>()(
             metode: "",
             total: 0,
             user: null,
-            datePembelian: moment().tz("Asia/Jakarta").format("YYYY-MM-DD HH::mm:ss"),
+            datePembelian: moment().tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss"),
 
             nextStep: () => set((state) => ({ step: state.step + 1 })),
             prevStep: () => set((state) => ({ step: state.step - 1 })),
@@ -71,8 +71,7 @@ export const usePembelianStore = create<PembelianState>()(
                         b.kodeItem === barangBaru.kodeItem ? { ...b, jumlah: b.jumlah + 1 } : b
                     );
                 } else {
-                    // updatedList = [...state.listBarang, { ...barangBaru, jumlah: 1 }];
-                    updatedList = [{ ...barangBaru, jumlah: 1 }, ...state.listBarang];
+                    updatedList = [...state.listBarang, { ...barangBaru, jumlah: 1 }];
                 }
 
                 const newTotal = updatedList.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);

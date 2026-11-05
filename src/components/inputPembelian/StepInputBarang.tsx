@@ -99,6 +99,7 @@ export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
                     <table className="w-full text-center text-sm">
                         <thead>
                             <tr className="bg-base-200 font-semibold border-b border-base-300">
+                                <th className="p-3">No</th>
                                 <th className="p-3">Kode</th>
                                 <th className="p-3">Nama Item</th>
                                 <th className="p-3">Harga</th>
@@ -111,13 +112,14 @@ export function StepInputBarang({ dataItem, onEditHarga }: StepInputItemProps) {
                         <tbody className="divide-y divide-base-300">
                             {listBarang.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center text-gray-400 italic">
+                                    <td colSpan={8} className="p-8 text-center text-gray-400 italic">
                                         Belum ada item belanja.
                                     </td>
                                 </tr>
                             ) : (
-                                listBarang.map((item) => (
+                                listBarang.map((item, index) => (
                                     <tr key={item.kodeItem} className="hover:bg-base-200">
+                                        <td className="p-3 w-12 font-semibold">{index + 1}</td>
                                         <td className="p-3 font-mono text-xs min-w-[100px]">{item.barcode}</td>
                                         <td className="p-3 font-medium min-w-[200px]">{item.namaItem}</td>
                                         <td className="p-3 text-right min-w-[150px]">
